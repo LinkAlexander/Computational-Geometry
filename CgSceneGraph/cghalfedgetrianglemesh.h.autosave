@@ -1,0 +1,12 @@
+#ifndef CGHALFEDGETRIANGLEMESH_H
+#define CGHALFEDGETRIANGLEMESH_H
+
+#include "CgBase/CgBaseHalfEdgeTriangleMesh.h"
+
+class CgHalfEdgeTriangleMesh : public CgBaseHalfEdgeTriangleMesh
+{
+public:
+    CgHalfEdgeTriangleMesh();
+};
+
+#endif // CGHALFEDGETRIANGLEMESH_H
