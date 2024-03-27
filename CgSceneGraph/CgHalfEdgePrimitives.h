@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "CgBase/CgBaseHalfdgePrimitives.h"
+#include <vector>
 
 //forward declaration
 class CgHeVert;
@@ -16,7 +17,7 @@ public:
 
     const CgBaseHeEdge* edge() const;
     const glm::vec3 normal() const;
-
+    void calculateNormal();
     CgHeEdge* m_edge;
 
     glm::vec3 m_normal;
@@ -37,11 +38,16 @@ public:
     const CgBaseHeEdge* edge() const;
     const glm::vec3 position() const;
     const glm::vec3 color() const;
+    void calculateNormal();
 
+    const std::vector<CgHeFace*> getFacesOfVertex();
+    const std::vector<CgHeEdge*> getEdgesOfVertex();
+    const std::vector<CgHeVert*> getNeighborVerts(bool *isBorderVert);
 
     CgHeEdge* m_edge;
     glm::vec3 m_position;
     glm::vec3 m_color;
+    glm::vec3 m_normal;
 
 };
 

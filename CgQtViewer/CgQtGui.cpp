@@ -71,7 +71,7 @@ CgQtGui::CgQtGui(CgQtMainApplication *mw)
     mainLayout->addWidget(w);
 
     setLayout(mainLayout);
-    setWindowTitle(tr("Übung Computational Geometry -  Sommer 2022"));
+    setWindowTitle(tr("Übung Computational Geometry - Sommer 2024"));
 
 
     /* create Menu Bar */

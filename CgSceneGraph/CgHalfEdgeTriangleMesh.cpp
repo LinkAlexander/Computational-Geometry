@@ -1,5 +1,5 @@
 #include "CgHalfEdgeTriangleMesh.h"
-
+#include <map>
 #include "CgBase/CgEnums.h"
 #include "CgUtils/ObjLoader.h"
 
@@ -94,8 +94,17 @@ m_id(id)
 CgHalfEdgeTriangleMesh::~CgHalfEdgeTriangleMesh()
 {
     // thats not enough, have to kill Objects as well´
+    for (CgBaseHeFace* face : m_faces) {
+        delete face;
+    }
     m_faces.clear();
+    for (CgBaseHeEdge* edge : m_edges) {
+        delete edge;
+    }
     m_edges.clear();
+    for (CgBaseHeVert* vert : m_verts) {
+        delete vert;
+    }
     m_verts.clear();
 }
 
@@ -110,6 +119,9 @@ void CgHalfEdgeTriangleMesh::init( std::string filename)
     std::vector<glm::vec3> temp_vertnormals;
     std::vector<unsigned int> temp_indices;
 
+    m_verts.clear();
+    m_edges.clear();
+    m_faces.clear();
 
     ObjLoader loader;
     loader.load(filename);
@@ -120,6 +132,118 @@ void CgHalfEdgeTriangleMesh::init( std::string filename)
 
 
     // now need to convert into HalfEdge Datastructure :-) ...
+
+    // iterate through the List of vertices
+    for(size_t i = 0 ; i < temp_indices.size(); i++)
+    {
+        // save verts from temp list into m_verts
+        // and get the position and set color
+        CgHeVert* vert = new CgHeVert();
+        vert->m_position = temp_vertices[i];
+        vert->m_color = {0 , 255, 0};
+
+        m_verts.push_back(vert);
+    }
+
+
+    // Helper structure to accelerate pair lookup
+    // Stores the indices of both vertices for an edge as the key to look up the edge
+    std::map<std::pair<std::size_t, std::size_t>, CgHeEdge*> edges_by_vertices;
+
+
+    // iterate through the list of indices
+    // and build new half edge data structure
+    for (std::size_t i = 0; i < temp_indices.size(); i += 3) {
+        // edges of a triangle
+        CgHeEdge* edge0 = new CgHeEdge;
+        CgHeEdge* edge1 = new CgHeEdge;
+        CgHeEdge* edge2 = new CgHeEdge;
+
+        // indices
+        unsigned vert_index_0 = temp_indices[i];
+        unsigned vert_index_1 = temp_indices[i+1];
+        unsigned vert_index_2 = temp_indices[i+2];
+
+        // vertices of a triangle
+        CgHeVert* vert0 = (CgHeVert*)m_verts[vert_index_0];
+        CgHeVert* vert1 = (CgHeVert*)m_verts[vert_index_1];
+        CgHeVert* vert2 = (CgHeVert*)m_verts[vert_index_2];
+
+
+        // face of a triangle
+
+        CgHeFace* face = new CgHeFace();
+
+        // assign vertices to edges
+        // Only the Vertex on the end of the edge is stored
+        edge0->m_vert = vert0;
+        edge1->m_vert = vert1;
+        edge2->m_vert = vert2;
+
+        // assign edges to vertices if not already happend
+        if (!vert0->edge())
+            vert0->m_edge = edge0;
+        if (!vert1->edge())
+            vert1->m_edge = edge1;
+        if (!vert1->edge())
+            vert1->m_edge = edge1;
+
+        // connect the edges Clockwise
+        edge0->m_next = edge1;
+        edge1->m_next = edge2;
+        edge2->m_next = edge0;
+
+        // assign edges to face
+        edge0->m_face = face;
+        edge1->m_face = face;
+        edge2->m_face = face;
+
+        // assign starting edge to face
+        face->m_edge = edge0;
+
+        // save edges 0-2 into m_edges
+        m_edges.push_back(edge0);
+        m_edges.push_back(edge1);
+        m_edges.push_back(edge2);
+
+        // Register this edge and its vertices in the pair lookup table
+        edges_by_vertices[std::make_pair(vert_index_0, vert_index_1)] = edge0;
+        edges_by_vertices[std::make_pair(vert_index_1, vert_index_2)] = edge1;
+        edges_by_vertices[std::make_pair(vert_index_2, vert_index_0)] = edge2;
+
+        // Try to load pairs for each new edge from the pair lookup table
+        CgHeEdge* pair0 = edges_by_vertices[std::make_pair(vert_index_1, vert_index_0)];
+        CgHeEdge* pair1 = edges_by_vertices[std::make_pair(vert_index_2, vert_index_1)];
+        CgHeEdge* pair2 = edges_by_vertices[std::make_pair(vert_index_0, vert_index_2)];
+
+        // Connect each new edge with its pair if it exists
+        if (pair0) {
+            edge0->m_pair = pair0;
+            pair0->m_pair = edge0;
+        }
+        if (pair1) {
+            edge1->m_pair = pair1;
+            pair1->m_pair = edge1;
+        }
+        if (pair2) {
+            edge2->m_pair = pair2;
+            pair2->m_pair = edge2;
+        }
+
+        // // calculating face normal
+        // face->calculateNormal();
+
+        // // save face into m_faces
+        // m_faces.push_back(face);
+
+
+    }
+
+    // calculate the normal for each vert
+    // for (CgBaseHeVert* base_vert : m_verts) {
+    //     CgHeVert* vert = (CgHeVert*)base_vert;
+    //     vert->calculateNormal();
+    // }
 }
 
 const glm::vec3 CgHalfEdgeTriangleMesh::getCenter() const

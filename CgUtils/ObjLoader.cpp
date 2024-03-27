@@ -8,6 +8,8 @@
 #include<string>
 #include <assert.h>
 #include <map>
+#include "CgSceneGraph/CgHalfEdgePrimitives.h"
+#include "CgSceneGraph/CgHalfEdgeTriangleMesh.h"
 
 using namespace std;
 

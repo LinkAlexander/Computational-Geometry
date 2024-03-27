@@ -45,6 +45,7 @@ private:
     // there is no scenegraph, either a point cloud or a mesh is used
     CgPointCloud* m_pointcloud;
     CgTriangleMesh* m_triangle_mesh;
+    CgHalfEdgeTriangleMesh* m_HETriangle_mesh;
 
     // all the things that you would normally find in a scenegraph
     glm::mat4 m_current_transformation;

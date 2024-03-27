@@ -319,7 +319,6 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
 
             m_triangle_mesh= new CgTriangleMesh();
             m_triangle_mesh->init(ev->FileName());
-
             m_center=m_triangle_mesh->getCenter();
             m_renderer->init(m_triangle_mesh);
             m_renderer->redraw();
