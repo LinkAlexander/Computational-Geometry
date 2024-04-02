@@ -4,12 +4,11 @@
 #include "CgBase/CgBaseHalfEdgeTriangleMesh.h"
 #include "CgHalfEdgePrimitives.h"
 
-#include <vector>
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
 
-class CgHalfEdgeTriangleMesh : public CgBaseHalfEdgeTriangleMesh
-{
+class CgHalfEdgeTriangleMesh : public CgBaseHalfEdgeTriangleMesh {
 public:
     CgHalfEdgeTriangleMesh();
     CgHalfEdgeTriangleMesh(int id);
@@ -26,26 +25,25 @@ public:
 
     //own stuff
 
-    void init( std::string filename);
+    void init(std::string filename);
     const glm::vec3 getCenter() const;
-
+    void loopSubdivision();
 
 private:
-
     std::vector<CgBaseHeFace*> m_faces;
     std::vector<CgBaseHeVert*> m_verts;
     std::vector<CgBaseHeEdge*> m_edges;
 
-
     const Cg::ObjectType m_type;
     const unsigned int m_id;
 
+    void loadDemoTriangles();
+    void loadFromVertexList(std::vector<glm::vec3> temp_vertices, std::vector<unsigned int> temp_indices);
+
+    float calculateLoopSubdivisionBeta(int n);
 };
 
-
-inline Cg::ObjectType  CgHalfEdgeTriangleMesh::getType() const {return m_type;}
-inline unsigned int CgHalfEdgeTriangleMesh::getID() const {return m_id;}
-
-
+inline Cg::ObjectType CgHalfEdgeTriangleMesh::getType() const { return m_type; }
+inline unsigned int CgHalfEdgeTriangleMesh::getID() const { return m_id; }
 
 #endif // CGHALFEDGETRIANGLEMESH_H

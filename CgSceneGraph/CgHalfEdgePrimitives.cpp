@@ -3,40 +3,37 @@
 
 CgHeFace::CgHeFace()
 {
-    m_edge=NULL;
+    m_edge = NULL;
 }
 
 CgHeVert::CgHeVert()
 {
-    m_edge=NULL;
+    m_edge = NULL;
 }
 
 CgHeEdge::CgHeEdge()
 {
-    m_next=NULL;
-    m_pair=NULL;
-    m_vert=NULL;
-    m_face=NULL;
+    m_next = NULL;
+    m_pair = NULL;
+    m_vert = NULL;
+    m_face = NULL;
 }
 
 CgHeEdge::~CgHeEdge()
 {
-
 }
 
 CgHeVert::~CgHeVert()
 {
-
 }
 
 CgHeFace::~CgHeFace()
 {
-
 }
 
 const CgBaseHeEdge* CgHeFace::edge() const
 {
-    return (CgBaseHeEdge*) m_edge;
+    return (CgBaseHeEdge*)m_edge;
 }
 
 const glm::vec3 CgHeFace::normal() const
@@ -44,30 +41,51 @@ const glm::vec3 CgHeFace::normal() const
     return m_normal;
 }
 
+/**
+ * @brief CgHeFace::calculateNormal calculates the normal of a given face
+ * and saves the result into the m_normal attribute of the face.
+ */
+void CgHeFace::calculateNormal()
+{
+    CgHeFace* face = this;
+
+    const CgHeEdge* edge1 = (CgHeEdge*)face->edge();
+    const CgHeEdge* edge2 = (CgHeEdge*)edge1->next();
+    const CgHeEdge* edge3 = (CgHeEdge*)edge2->next();
+
+    const CgHeVert* vert1 = (CgHeVert*)edge1->vert();
+    const CgHeVert* vert2 = (CgHeVert*)edge2->vert();
+    const CgHeVert* vert3 = (CgHeVert*)edge3->vert();
+
+    glm::vec3 vecA = vert2->position() - vert1->position();
+    glm::vec3 vecB = vert3->position() - vert1->position();
+    glm::vec3 face_normal = glm::normalize(glm::cross(vecA, vecB));
+    face->m_normal = face_normal;
+}
+
 const CgBaseHeVert* CgHeEdge::vert() const
 {
-    return (CgBaseHeVert*) m_vert;
+    return (CgBaseHeVert*)m_vert;
 }
 
 const CgBaseHeEdge* CgHeEdge::next() const
 {
-    return (CgBaseHeEdge*) m_next;
+    return (CgBaseHeEdge*)m_next;
 }
 
 const CgBaseHeEdge* CgHeEdge::pair() const
 {
-    return (CgBaseHeEdge*) m_pair;
+    return (CgBaseHeEdge*)m_pair;
 }
 
 const CgBaseHeFace* CgHeEdge::face() const
 {
-    return (CgBaseHeFace*) m_face;
+    return (CgBaseHeFace*)m_face;
 }
-
 
 const CgBaseHeEdge* CgHeVert::edge() const
 {
-    return (CgBaseHeEdge*) m_edge;
+    return (CgBaseHeEdge*)m_edge;
 }
 
 const glm::vec3 CgHeVert::position() const
@@ -78,23 +96,6 @@ const glm::vec3 CgHeVert::position() const
 const glm::vec3 CgHeVert::color() const
 {
     return m_color;
-}
-
-void CgHeFace::calculateNormal() {
-    CgHeFace* face = this;
-
-    const CgHeEdge* edge0 = (CgHeEdge*)face->edge();
-    const CgHeEdge* edge1 = (CgHeEdge*)edge0->next();
-    const CgHeEdge* edge2 = (CgHeEdge*)edge1->next();
-
-    const CgHeVert* vert0 = (CgHeVert*)edge0->vert();
-    const CgHeVert* vert1 = (CgHeVert*)edge1->vert();
-    const CgHeVert* vert2 = (CgHeVert*)edge2->vert();
-
-    glm::vec3 vecA = vert1->position() - vert0->position();
-    glm::vec3 vecB = vert2->position() - vert0->position();
-    glm::vec3 face_normal = glm::normalize(glm::cross(vecA, vecB));
-    face->m_normal = face_normal;
 }
 
 /**
@@ -111,25 +112,6 @@ void CgHeVert::calculateNormal()
         vertex_normal += f->normal();
     }
     m_normal = glm::normalize(vertex_normal);
-}
-
-
-/**
- * @brief CgHeVert::getFacesOfVertex finds all faces of a given vertex
- * @return std::vector of all faces
- */
-const std::vector<CgHeFace*> CgHeVert::getFacesOfVertex()
-{
-    // get all edges of a given vert
-    std::vector<CgHeEdge*> vert_edges = getEdgesOfVertex();
-    std::vector<CgHeFace*> faces;
-
-    // find all faces of the given edges
-    for (CgHeEdge* e : vert_edges) {
-        CgHeFace* face = (CgHeFace*)e->face();
-        faces.push_back(face);
-    }
-    return faces;
 }
 
 /**
@@ -188,4 +170,52 @@ const std::vector<CgHeEdge*> CgHeVert::getEdgesOfVertex()
         edges.push_back(edge_forward);
     }
     return edges;
+}
+
+/**
+ * @brief CgHeVert::getFacesOfVertex finds all faces of a given vertex
+ * @return std::vector of all faces
+ */
+const std::vector<CgHeFace*> CgHeVert::getFacesOfVertex()
+{
+    // get all edges of a given vert
+    std::vector<CgHeEdge*> vert_edges = getEdgesOfVertex();
+    std::vector<CgHeFace*> faces;
+
+    // find all faces of the given edges
+    for (CgHeEdge* e : vert_edges) {
+        CgHeFace* face = (CgHeFace*)e->face();
+        faces.push_back(face);
+    }
+    return faces;
+}
+
+/**
+ * @brief CgHeVert::getNeighborVerts finds all vertices which are located around (connected with)
+ * a given vertex.
+ * @param isBorderVert a boolean which determines if am vertex is at a border
+ * @return a std::vector of all found vertices
+ */
+const std::vector<CgHeVert*> CgHeVert::getNeighborVerts(bool* isBorderVert)
+{
+    *isBorderVert = false;
+
+    // get all edges of a given vert
+    std::vector<CgHeEdge*> vert_edges = getEdgesOfVertex();
+
+    // all neighboring verts
+    std::vector<CgHeVert*> n_verts;
+
+    // get potential first vert to add, connected by ingoing edge
+    const CgHeEdge* first_edge = (CgHeEdge*)vert_edges[0]->next()->next();
+    if (!first_edge->pair()) {
+        n_verts.push_back((CgHeVert*)first_edge->vert());
+        *isBorderVert = true;
+    }
+
+    for (CgHeEdge* out_edge : vert_edges) {
+        // Iterate over all outgoing edges, all edges point to a different neighbor vertex
+        n_verts.push_back((CgHeVert*)out_edge->next()->vert());
+    }
+    return n_verts;
 }
