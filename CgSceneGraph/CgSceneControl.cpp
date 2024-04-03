@@ -37,7 +37,7 @@ CgSceneControl::CgSceneControl()
 
     m_select_ray=NULL;
     m_pointcloud = NULL;
-//    m_disc = NULL;
+    m_disc = NULL;
     m_he_mesh= NULL;
 
     m_he_mesh = new CgHalfEdgeTriangleMesh();
