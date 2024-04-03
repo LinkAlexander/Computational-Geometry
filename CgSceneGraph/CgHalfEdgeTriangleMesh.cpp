@@ -98,13 +98,12 @@ void CgHalfEdgeTriangleMesh::loadDemoTriangles()
 void CgHalfEdgeTriangleMesh::loadFromVertexList(std::vector<glm::vec3> temp_vertices,
     std::vector<unsigned int> temp_indices)
 {
-    // iterate through the List of vertices
+    // iterate through the List of given vertices.
     for (std::size_t i = 0; i < temp_vertices.size(); i++) {
-        // save verts from temp list into m_verts
-        // therefore get the position and set color value to white
+        // save verts from temp list into m_verts. Get position and set color (green for now)
         CgHeVert* vert = new CgHeVert();
         vert->m_position = temp_vertices[i];
-        vert->m_color = { 0, 255, 0 };
+        vert->m_color = { 0, 255, 255 };
         m_verts.push_back(vert);
     }
 
@@ -112,8 +111,8 @@ void CgHalfEdgeTriangleMesh::loadFromVertexList(std::vector<glm::vec3> temp_vert
     // Stores the indices of both vertices for an edge as the key to look up the edge
     std::map<std::pair<std::size_t, std::size_t>, CgHeEdge*> edges_by_vertices;
 
-    // iterate through the list of indices
-    // and build new half edge data structure
+    // iterate through the list of indices to build new half edge data structure
+    //
     for (std::size_t i = 0; i < temp_indices.size(); i += 3) {
 
         // edges of a triangle
@@ -148,7 +147,7 @@ void CgHalfEdgeTriangleMesh::loadFromVertexList(std::vector<glm::vec3> temp_vert
             vert2->m_edge = edge2;
 
         // connect the edges
-        // Clockwise
+        // Clockwise TODO Maybe change this
         edge0->m_next = edge1;
         edge1->m_next = edge2;
         edge2->m_next = edge0;
@@ -213,7 +212,7 @@ CgHalfEdgeTriangleMesh::CgHalfEdgeTriangleMesh(int id)
 
 CgHalfEdgeTriangleMesh::~CgHalfEdgeTriangleMesh()
 {
-    // thats not enough, have to kill Objects as well
+    // delete pointers and clear the vector
 
     for (CgBaseHeFace* face : m_faces) {
         delete face;

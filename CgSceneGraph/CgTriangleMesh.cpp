@@ -96,7 +96,7 @@ void CgTriangleMesh::init( std::string filename)
 
     for(unsigned int i=0;i<m_vertices.size();i++)
     {
-      m_vertex_colors.push_back(glm::vec3(0.0,1.0,0.0));
+      m_vertex_colors.push_back(glm::vec3(0.0,1.0,1.0));
     }
 }
 

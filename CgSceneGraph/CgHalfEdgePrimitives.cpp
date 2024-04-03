@@ -160,7 +160,7 @@ const std::vector<CgHeEdge*> CgHeVert::getEdgesOfVertex()
             }
         } while (edge_temp != vert->edge());
     }
-
+    //Save the edges, in the correct order, without holes
     for (int i = edges_backward.size() - 1; i >= 0; i--) {
         CgHeEdge* edge_backward = edges_backward[i];
         edges.push_back(edge_backward);
