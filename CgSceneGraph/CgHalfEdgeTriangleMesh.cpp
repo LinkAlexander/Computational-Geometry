@@ -4,7 +4,6 @@
 #include "CgUtils/ObjLoader.h"
 #include <map>
 #include <utility>
-#include <iostream>
 
 CgHalfEdgeTriangleMesh::CgHalfEdgeTriangleMesh()
     : m_type(Cg::HalfEdgeTriangleMesh)
@@ -135,9 +134,9 @@ void CgHalfEdgeTriangleMesh::loadFromVertexList(std::vector<glm::vec3> temp_vert
         CgHeFace* face = new CgHeFace();
 
         // assign vertices to edges
-        edge0->m_vert = vert1;
-        edge1->m_vert = vert2;
-        edge2->m_vert = vert0;
+        edge0->m_vert = vert0;
+        edge1->m_vert = vert1;
+        edge2->m_vert = vert2;
 
         // assign edges to vertices if not already happend
         if (!vert0->edge())
@@ -232,18 +231,18 @@ void CgHalfEdgeTriangleMesh::loopSubdivision()
         }
 
         /* find the four relevant vertices around the edge to split (stencil)
-        *       o f2
-        *      / \
-        *     /   \
-        *    /     \
-        * n2 o--o--o n1
-        *    \     /
-        *     \   /
-        *      \ /
-        *       o f1
+        *     o
+        *    / \
+        *   /   \
+        *  /     \
+        *  o--o--o
+        *  \     /
+        *   \   /
+        *    \ /
+        *     o
         */
         const CgHeVert* n1 = (CgHeVert*)edge->vert(); // vert connected to the edge
-        const CgHeVert* n2 = (CgHeVert*)edge->next()->next()->vert(); // vert connected to the edge
+        const CgHeVert* n2 = (CgHeVert*)edge->next()->vert(); // vert connected to the edge
 
         CgHeEdge* pair = (CgHeEdge*)edge->pair();
 
@@ -252,8 +251,8 @@ void CgHalfEdgeTriangleMesh::loopSubdivision()
         // if pair is not empty
         if (pair) {
             // Find the two relevant references to the vertices (Start and end of an Edge through the other edges)
-            const CgHeVert* f1 = (CgHeVert*)edge->next()->vert(); // vert not directly connected to the edge but relevant
-            const CgHeVert* f2 = (CgHeVert*)edge->pair()->next()->vert(); // vert not directly connected to the edge but relevant
+            const CgHeVert* f1 = (CgHeVert*)edge->next()->next()->vert(); // vert not directly connected to the edge but relevant
+            const CgHeVert* f2 = (CgHeVert*)edge->pair()->next()->next()->vert(); // vert not directly connected to the edge but relevant
 
             // calculate the Position of the new vert
             split_vert->m_position = (3.0f / 8.0f) * n1->position() + (3.0f / 8.0f) * n2->position() + (1.0f / 8.0f) * f1->position() + (1.0f / 8.0f) * f2->position();
@@ -388,9 +387,9 @@ void CgHalfEdgeTriangleMesh::loopSubdivision()
         oe2->m_next = ie_pair1;
         oe3->m_next = ie_pair2;
 
-        oe_ext1->m_vert = iv2;
-        oe_ext2->m_vert = iv3;
-        oe_ext3->m_vert = iv1;
+        oe_ext1->m_vert = iv1;
+        oe_ext2->m_vert = iv2;
+        oe_ext3->m_vert = iv3;
 
         oe_ext1->m_pair = NULL;
         oe_ext2->m_pair = NULL;
