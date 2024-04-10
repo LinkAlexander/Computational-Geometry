@@ -38,6 +38,7 @@ namespace Cg{
     CgEventGroup1                   = 0x000f000,
 
     // feel free to add whatever you like
+    CgButtonPressedEvent = 0x0020000
     }EventType;
 
 

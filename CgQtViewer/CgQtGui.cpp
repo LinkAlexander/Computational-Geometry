@@ -3,7 +3,11 @@
 #include "CgQtGLRenderWidget.h"
 #include "CgQtGui.h"
 #include "CgQtMainApplication.h"
+#include "../CgEvents/CgButtonPressedEvent.h"
+
 #include "../CgBase/CgEnums.h"
+
+#include "../CgUtils/CgEventEnums.h"
 #include "../CgEvents/CgMouseEvent.h"
 #include "../CgEvents/CgKeyEvent.h"
 #include "../CgEvents/CgWindowResizeEvent.h"
@@ -52,7 +56,10 @@ CgQtGui::CgQtGui(CgQtMainApplication *mw)
 
 
     QWidget *opt = new QWidget;
-    createOptionPanelExample1(opt);
+    createSubdividePanel(opt);
+    QWidget* subdiv = new QWidget;
+    createSubdividePanel(subdiv);
+
 
     QWidget *otheropt = new QWidget;
     createOptionPanelExample2(otheropt);
@@ -151,8 +158,25 @@ QSlider *CgQtGui::createSlider()
 
 
 
+void CgQtGui::createSubdividePanel(QWidget* parent)
+{
+    QVBoxLayout* tab1_control = new QVBoxLayout();
 
+    QPushButton* subdiv = new QPushButton("&subdivide");
+    tab1_control->addWidget(subdiv);
 
+    connect(subdiv, SIGNAL(clicked()), this, SLOT(slotSubDivPressed()));
+
+    parent->setLayout(tab1_control);
+}
+
+void CgQtGui::slotSubDivPressed()
+{
+    CgBaseEvent* event = new CgButtonPressedEvent(Cg::CgButtonPressedEvent, SUBDIVISION);
+    std::cout << "SubDiv pressed." << std::endl;
+
+    notifyObserver(event);
+}
 
 
 void CgQtGui::createOptionPanelExample1(QWidget* parent)
@@ -335,7 +359,7 @@ void CgQtGui::slotTrackballChanged()
 
 void CgQtGui::slotMyButton1Pressed()
 {
-   std::cout << "button 1 pressed " << std::endl;
+   std::cout << "button 1 pressed." << std::endl;
 
 }
 

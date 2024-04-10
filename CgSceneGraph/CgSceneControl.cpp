@@ -4,6 +4,8 @@
 #include "CgBase/CgEnums.h"
 #include "CgEvents/CgMouseEvent.h"
 #include "CgEvents/CgKeyEvent.h"
+#include "CgEvents/CgButtonPressedEvent.h"
+#include "CgUtils/CgEventEnums.h"
 #include "CgEvents/CgWindowResizeEvent.h"
 #include "CgEvents/CgLoadMeshEvent.h"
 #include "CgEvents/CgLoadHalfEdgeMeshEvent.h"
@@ -364,7 +366,24 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
             m_renderer->redraw();
           }
     }
+    // Subdivision
+    if (e->getType() & Cg::CgButtonPressedEvent) {
+        CgButtonPressedEvent* ev = (CgButtonPressedEvent*)e;
+        int code = ev->getCode();
 
+        switch (code) {
+        case SUBDIVISION:
+            m_he_mesh->loopSubdivision();
+            m_renderer->init(m_he_mesh);
+            m_renderer->redraw();
+            break;
+            /*case RESET:
+            delete m_he_mesh;
+            m_renderer->init(m_he_mesh);
+            m_renderer->redraw();
+            break;*/
+        }
+    }
 
 
 

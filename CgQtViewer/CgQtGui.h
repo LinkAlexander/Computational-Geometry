@@ -102,6 +102,7 @@ private:
     QButtonGroup* myButtonGroup;
     QCheckBox* myCheckBox1;
     QSpinBox* mySpinBox1;
+    void createSubdividePanel(QWidget* panel);
 
 
     bool m_use_spats;
@@ -126,6 +127,7 @@ private slots:
     void slotLoadPointCloudFile();
     void slotSplatting();
     void slotPickRay();
+    void slotSubDivPressed();
 
 
 

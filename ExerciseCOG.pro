@@ -5,6 +5,7 @@ QMAKE_CXXFLAGS += -std=c++17
 CONFIG += c++17
 
 SOURCES += main.cpp \
+    CgEvents/CgButtonPressedEvent.cpp \
     CgEvents/CgLoadHalfEdgeMeshEvent.cpp \
     CgEvents/CgLoadMeshEvent.cpp \
     CgEvents/CgLoadPointCloudEvent.cpp \
@@ -32,6 +33,7 @@ SOURCES += main.cpp \
 HEADERS += \
     CgBase/CgBaseHalfEdgeTriangleMesh.h \
     CgBase/CgBaseHalfdgePrimitives.h \
+    CgEvents/CgButtonPressedEvent.h \
     CgEvents/CgLoadHalfEdgeMeshEvent.h \
     CgEvents/CgLoadMeshEvent.h \
     CgEvents/CgLoadPointCloudEvent.h \
@@ -65,6 +67,7 @@ HEADERS += \
     CgQtViewer/CgTrackball.h \
     CgEvents/CgWindowResizeEvent.h \
     CgSceneGraph/CgTriangleMesh.h \
+    CgUtils/CgEventEnums.h \
     CgUtils/ObjLoader.h \
     CgBase/CgBaseImage.h \
     CgEvents/CgTrackballEvent.h
