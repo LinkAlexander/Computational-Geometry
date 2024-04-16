@@ -395,6 +395,8 @@ void CgHalfEdgeTriangleMesh::loopSubdivision()
         oe_ext2->m_pair = NULL;
         oe_ext3->m_pair = NULL;
 
+        // The old edges maintain their pairing, thus no NULL
+
         oe_ext1->m_face = face2;
         oe_ext2->m_face = face3;
         oe_ext3->m_face = face1;
@@ -447,7 +449,7 @@ void CgHalfEdgeTriangleMesh::loopSubdivision()
     for (CgBaseHeEdge* base_edge : m_edges) {
         CgHeEdge* edge = (CgHeEdge*)base_edge;
 
-        CgHeEdge* ep = (CgHeEdge*)edge->pair(); // get original pair before split (extensionpair)
+        CgHeEdge* ep = (CgHeEdge*)edge->pair(); // get original pair before split (extensionpair)-
 
         // if original pair is empty, there will not be a new pair
         if (!ep) {
