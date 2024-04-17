@@ -4,6 +4,7 @@
 #include "CgUtils/ObjLoader.h"
 #include <map>
 #include <utility>
+#include <iostream>
 
 CgHalfEdgeTriangleMesh::CgHalfEdgeTriangleMesh()
     : m_type(Cg::HalfEdgeTriangleMesh)
@@ -312,7 +313,6 @@ void CgHalfEdgeTriangleMesh::loopSubdivision()
                 betas[n] = calculateLoopSubdivisionBeta(n);
             }
             float beta = betas[n];
-
             // calculate new position of old verts
             glm::vec3 new_pos = { 0, 0, 0 };
             for (const CgHeVert* n_vert : n_verts) {

@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
     QApplication app(argc, argv);
 
-       QCoreApplication::setApplicationName("Übung Computational Geometry -  Sommer 2022");
+       QCoreApplication::setApplicationName("Übung Computational Geometry -  Sommer 2024");
        QCoreApplication::setOrganizationName("QtProject");
        QCoreApplication::setApplicationVersion(QT_VERSION_STR);
        QCommandLineParser parser;
