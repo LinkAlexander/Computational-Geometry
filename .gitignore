@@ -1,3 +1,5 @@
 
 CgQtViewer/CGQtGLRenderWidget.cpp
 ExerciseCOG.pro.user
+/cmake-build-debug/
+.idea/

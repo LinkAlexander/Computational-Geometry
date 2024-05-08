@@ -93,13 +93,13 @@ void CgPointCloud::init( std::string filename, bool cheat_normals)
     //test of getNeartestNeighbors(..) method
     // generates blue dots on the tail of the bunny
 
-    unsigned int k=50;
-    std::vector<int> neighbors = getNearestNeighbors(0,k);
+    // unsigned int k=50;
+    // std::vector<int> neighbors = getNearestNeighbors(0,k);
 
-    for(unsigned int i=0;i<k;i++)
-      {
-        m_vertex_colors[neighbors[i]]=glm::vec3(0.0,0.0,1.0);
-      }
+    // for(unsigned int i=0;i<k || i < m_vertex_colors.size();i++)
+    //   {
+    //     m_vertex_colors[neighbors[i]]=glm::vec3(0.0,0.0,1.0);
+    //   }
 }
 
 
