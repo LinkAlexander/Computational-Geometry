@@ -36,6 +36,7 @@ set(SOURCES
         CgEvents/CgMouseEvent.cpp CgEvents/CgMouseEvent.h
         CgEvents/CgPickRayEvent.cpp CgEvents/CgPickRayEvent.h
         CgEvents/CgSplatEvent.cpp CgEvents/CgSplatEvent.h
+        CgEvents/CgButtonPressedEvent.h
         CgEvents/CgTrackballEvent.cpp CgEvents/CgTrackballEvent.h
         CgEvents/CgWindowResizeEvent.cpp CgEvents/CgWindowResizeEvent.h
         CgMath/CgEigenDecomposition3x3.cpp CgMath/CgEigenDecomposition3x3.h
@@ -56,6 +57,7 @@ set(SOURCES
         CgSceneGraph/CgTriangleMesh.cpp CgSceneGraph/CgTriangleMesh.h
         CgUtils/ObjLoader.cpp CgUtils/ObjLoader.h
         main.cpp
+        CgEvents/CgButtonPressedEvent.cpp
 )
 
 

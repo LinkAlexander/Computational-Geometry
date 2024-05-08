@@ -173,8 +173,6 @@ void CgQtGui::createSubdividePanel(QWidget* parent)
 void CgQtGui::slotSubDivPressed()
 {
     CgBaseEvent* event = new CgButtonPressedEvent(Cg::CgButtonPressedEvent, SUBDIVISION);
-    std::cout << "SubDiv pressed." << std::endl;
-
     notifyObserver(event);
 }
 

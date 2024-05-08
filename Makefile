@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = PointViewer1.0.0
-DISTDIR = /home/kronsi/Documents/Source-COG/.tmp/PointViewer1.0.0
+DISTDIR = /home/kronsi/Documents/GitHub/Source-COG/.tmp/PointViewer1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath-link,/usr/lib64
 LIBS          = $(SUBLIBS) /usr/lib64/libQt6OpenGL.so /usr/lib64/libQt6Widgets.so /usr/lib64/libQt6Gui.so /usr/lib64/libQt6Core.so -lpthread -lGLX -lOpenGL   
@@ -53,6 +53,7 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = main.cpp \
+		CgEvents/CgButtonPressedEvent.cpp \
 		CgEvents/CgLoadHalfEdgeMeshEvent.cpp \
 		CgEvents/CgLoadMeshEvent.cpp \
 		CgEvents/CgLoadPointCloudEvent.cpp \
@@ -79,6 +80,7 @@ SOURCES       = main.cpp \
 		moc_CgQtGui.cpp \
 		moc_CgQtMainApplication.cpp
 OBJECTS       = main.o \
+		CgButtonPressedEvent.o \
 		CgLoadHalfEdgeMeshEvent.o \
 		CgLoadMeshEvent.o \
 		CgLoadPointCloudEvent.o \
@@ -174,6 +176,7 @@ DIST          = /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt6/mkspecs/features/lex.prf \
 		ExerciseCOG.pro CgBase/CgBaseHalfEdgeTriangleMesh.h \
 		CgBase/CgBaseHalfdgePrimitives.h \
+		CgEvents/CgButtonPressedEvent.h \
 		CgEvents/CgLoadHalfEdgeMeshEvent.h \
 		CgEvents/CgLoadMeshEvent.h \
 		CgEvents/CgLoadPointCloudEvent.h \
@@ -207,9 +210,11 @@ DIST          = /usr/lib64/qt6/mkspecs/features/spec_pre.prf \
 		CgQtViewer/CgTrackball.h \
 		CgEvents/CgWindowResizeEvent.h \
 		CgSceneGraph/CgTriangleMesh.h \
+		CgUtils/CgEventEnums.h \
 		CgUtils/ObjLoader.h \
 		CgBase/CgBaseImage.h \
 		CgEvents/CgTrackballEvent.h main.cpp \
+		CgEvents/CgButtonPressedEvent.cpp \
 		CgEvents/CgLoadHalfEdgeMeshEvent.cpp \
 		CgEvents/CgLoadMeshEvent.cpp \
 		CgEvents/CgLoadPointCloudEvent.cpp \
@@ -404,8 +409,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib64/qt6/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents CgBase/CgBaseHalfEdgeTriangleMesh.h CgBase/CgBaseHalfdgePrimitives.h CgEvents/CgLoadHalfEdgeMeshEvent.h CgEvents/CgLoadMeshEvent.h CgEvents/CgLoadPointCloudEvent.h CgEvents/CgPickRayEvent.h CgEvents/CgSplatEvent.h CgMath/CgEigenDecomposition3x3.h CgMath/Eigen/Core CgMath/Eigen/Eigen CgMath/Eigen/SVD CgQtViewer/CgQtGLRenderWidget.h CgQtViewer/CgQtGui.h CgBase/CgObserver.h CgBase/CgObservable.h CgBase/CgBaseEvent.h CgBase/CgEnums.h CgEvents/CgMouseEvent.h CgQtViewer/CgQtMainApplication.h CgSceneGraph/CgHalfEdgePrimitives.h CgSceneGraph/CgHalfEdgeTriangleMesh.h CgSceneGraph/CgPointCloud.h CgSceneGraph/CgPolyLine.h CgSceneGraph/CgSceneControl.h CgEvents/CgKeyEvent.h CgBase/CgBaseRenderer.h CgBase/CgBaseRenderableObject.h CgBase/CgBasePointCloud.h CgBase/CgBaseTriangleMesh.h CgBase/CgBasePolyline.h CgBase/CgBaseSceneControl.h CgQtViewer/CgQtGlBufferObject.h CgQtViewer/CgTrackball.h CgEvents/CgWindowResizeEvent.h CgSceneGraph/CgTriangleMesh.h CgUtils/ObjLoader.h CgBase/CgBaseImage.h CgEvents/CgTrackballEvent.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp CgEvents/CgLoadHalfEdgeMeshEvent.cpp CgEvents/CgLoadMeshEvent.cpp CgEvents/CgLoadPointCloudEvent.cpp CgEvents/CgPickRayEvent.cpp CgEvents/CgSplatEvent.cpp CgMath/CgEigenDecomposition3x3.cpp CgQtViewer/CGQtGLRenderWidget.cpp CgQtViewer/CgQtGui.cpp CgBase/CgObservable.cpp CgEvents/CgMouseEvent.cpp CgQtViewer/CgQtMainApplication.cpp CgSceneGraph/CgHalfEdgePrimitives.cpp CgSceneGraph/CgHalfEdgeTriangleMesh.cpp CgSceneGraph/CgPointCloud.cpp CgSceneGraph/CgPolyLine.cpp CgSceneGraph/CgSceneControl.cpp CgEvents/CgKeyEvent.cpp CgQtViewer/CgQtGlBufferObject.cpp CgQtViewer/CgTrackball.cpp CgEvents/CgWindowResizeEvent.cpp CgSceneGraph/CgTriangleMesh.cpp CgUtils/ObjLoader.cpp CgEvents/CgTrackballEvent.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents CgBase/CgBaseHalfEdgeTriangleMesh.h CgBase/CgBaseHalfdgePrimitives.h CgEvents/CgButtonPressedEvent.h CgEvents/CgLoadHalfEdgeMeshEvent.h CgEvents/CgLoadMeshEvent.h CgEvents/CgLoadPointCloudEvent.h CgEvents/CgPickRayEvent.h CgEvents/CgSplatEvent.h CgMath/CgEigenDecomposition3x3.h CgMath/Eigen/Core CgMath/Eigen/Eigen CgMath/Eigen/SVD CgQtViewer/CgQtGLRenderWidget.h CgQtViewer/CgQtGui.h CgBase/CgObserver.h CgBase/CgObservable.h CgBase/CgBaseEvent.h CgBase/CgEnums.h CgEvents/CgMouseEvent.h CgQtViewer/CgQtMainApplication.h CgSceneGraph/CgHalfEdgePrimitives.h CgSceneGraph/CgHalfEdgeTriangleMesh.h CgSceneGraph/CgPointCloud.h CgSceneGraph/CgPolyLine.h CgSceneGraph/CgSceneControl.h CgEvents/CgKeyEvent.h CgBase/CgBaseRenderer.h CgBase/CgBaseRenderableObject.h CgBase/CgBasePointCloud.h CgBase/CgBaseTriangleMesh.h CgBase/CgBasePolyline.h CgBase/CgBaseSceneControl.h CgQtViewer/CgQtGlBufferObject.h CgQtViewer/CgTrackball.h CgEvents/CgWindowResizeEvent.h CgSceneGraph/CgTriangleMesh.h CgUtils/CgEventEnums.h CgUtils/ObjLoader.h CgBase/CgBaseImage.h CgEvents/CgTrackballEvent.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp CgEvents/CgButtonPressedEvent.cpp CgEvents/CgLoadHalfEdgeMeshEvent.cpp CgEvents/CgLoadMeshEvent.cpp CgEvents/CgLoadPointCloudEvent.cpp CgEvents/CgPickRayEvent.cpp CgEvents/CgSplatEvent.cpp CgMath/CgEigenDecomposition3x3.cpp CgQtViewer/CGQtGLRenderWidget.cpp CgQtViewer/CgQtGui.cpp CgBase/CgObservable.cpp CgEvents/CgMouseEvent.cpp CgQtViewer/CgQtMainApplication.cpp CgSceneGraph/CgHalfEdgePrimitives.cpp CgSceneGraph/CgHalfEdgeTriangleMesh.cpp CgSceneGraph/CgPointCloud.cpp CgSceneGraph/CgPolyLine.cpp CgSceneGraph/CgSceneControl.cpp CgEvents/CgKeyEvent.cpp CgQtViewer/CgQtGlBufferObject.cpp CgQtViewer/CgTrackball.cpp CgEvents/CgWindowResizeEvent.cpp CgSceneGraph/CgTriangleMesh.cpp CgUtils/ObjLoader.cpp CgEvents/CgTrackballEvent.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -444,18 +449,18 @@ moc_CgQtGLRenderWidget.cpp: CgQtViewer/CgQtGLRenderWidget.h \
 		CgBase/CgBaseRenderer.h \
 		moc_predefs.h \
 		/usr/lib64/qt6/libexec/moc
-	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/kronsi/Documents/Source-COG/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/kronsi/Documents/Source-COG -I/usr/include/qt6 -I/usr/include/qt6/QtOpenGL -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/13 -I/usr/include/c++/13/x86_64-redhat-linux -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-redhat-linux/13/include -I/usr/local/include -I/usr/include CgQtViewer/CgQtGLRenderWidget.h -o moc_CgQtGLRenderWidget.cpp
+	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/kronsi/Documents/GitHub/Source-COG/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/kronsi/Documents/GitHub/Source-COG -I/usr/include/qt6 -I/usr/include/qt6/QtOpenGL -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/13 -I/usr/include/c++/13/x86_64-redhat-linux -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-redhat-linux/13/include -I/usr/local/include -I/usr/include CgQtViewer/CgQtGLRenderWidget.h -o moc_CgQtGLRenderWidget.cpp
 
 moc_CgQtGui.cpp: CgQtViewer/CgQtGui.h \
 		CgBase/CgObservable.h \
 		moc_predefs.h \
 		/usr/lib64/qt6/libexec/moc
-	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/kronsi/Documents/Source-COG/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/kronsi/Documents/Source-COG -I/usr/include/qt6 -I/usr/include/qt6/QtOpenGL -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/13 -I/usr/include/c++/13/x86_64-redhat-linux -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-redhat-linux/13/include -I/usr/local/include -I/usr/include CgQtViewer/CgQtGui.h -o moc_CgQtGui.cpp
+	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/kronsi/Documents/GitHub/Source-COG/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/kronsi/Documents/GitHub/Source-COG -I/usr/include/qt6 -I/usr/include/qt6/QtOpenGL -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/13 -I/usr/include/c++/13/x86_64-redhat-linux -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-redhat-linux/13/include -I/usr/local/include -I/usr/include CgQtViewer/CgQtGui.h -o moc_CgQtGui.cpp
 
 moc_CgQtMainApplication.cpp: CgQtViewer/CgQtMainApplication.h \
 		moc_predefs.h \
 		/usr/lib64/qt6/libexec/moc
-	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/kronsi/Documents/Source-COG/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/kronsi/Documents/Source-COG -I/usr/include/qt6 -I/usr/include/qt6/QtOpenGL -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/13 -I/usr/include/c++/13/x86_64-redhat-linux -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-redhat-linux/13/include -I/usr/local/include -I/usr/include CgQtViewer/CgQtMainApplication.h -o moc_CgQtMainApplication.cpp
+	/usr/lib64/qt6/libexec/moc $(DEFINES) --include /home/kronsi/Documents/GitHub/Source-COG/moc_predefs.h -I/usr/lib64/qt6/mkspecs/linux-g++ -I/home/kronsi/Documents/GitHub/Source-COG -I/usr/include/qt6 -I/usr/include/qt6/QtOpenGL -I/usr/include/qt6/QtWidgets -I/usr/include/qt6/QtGui -I/usr/include/qt6/QtCore -I/usr/include/c++/13 -I/usr/include/c++/13/x86_64-redhat-linux -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-redhat-linux/13/include -I/usr/local/include -I/usr/include CgQtViewer/CgQtMainApplication.h -o moc_CgQtMainApplication.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -484,6 +489,12 @@ main.o: main.cpp CgQtViewer/CgQtMainApplication.h \
 		CgBase/CgEnums.h \
 		CgBase/CgBaseSceneControl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
+
+CgButtonPressedEvent.o: CgEvents/CgButtonPressedEvent.cpp CgEvents/CgButtonPressedEvent.h \
+		CgBase/CgBaseEvent.h \
+		CgBase/CgEnums.h \
+		CgUtils/CgEventEnums.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CgButtonPressedEvent.o CgEvents/CgButtonPressedEvent.cpp
 
 CgLoadHalfEdgeMeshEvent.o: CgEvents/CgLoadHalfEdgeMeshEvent.cpp CgEvents/CgLoadHalfEdgeMeshEvent.h \
 		CgBase/CgBaseEvent.h \
@@ -738,9 +749,11 @@ CgQtGui.o: CgQtViewer/CgQtGui.cpp CgQtViewer/CgQtGLRenderWidget.h \
 		CgQtViewer/CgQtGui.h \
 		CgBase/CgObservable.h \
 		CgQtViewer/CgQtMainApplication.h \
-		CgBase/CgEnums.h \
-		CgEvents/CgMouseEvent.h \
+		CgEvents/CgButtonPressedEvent.h \
 		CgBase/CgBaseEvent.h \
+		CgBase/CgEnums.h \
+		CgUtils/CgEventEnums.h \
+		CgEvents/CgMouseEvent.h \
 		CgEvents/CgKeyEvent.h \
 		CgEvents/CgWindowResizeEvent.h \
 		CgEvents/CgLoadMeshEvent.h \
@@ -800,6 +813,8 @@ CgSceneControl.o: CgSceneGraph/CgSceneControl.cpp CgSceneGraph/CgSceneControl.h 
 		CgBase/CgBaseSceneControl.h \
 		CgEvents/CgMouseEvent.h \
 		CgEvents/CgKeyEvent.h \
+		CgEvents/CgButtonPressedEvent.h \
+		CgUtils/CgEventEnums.h \
 		CgEvents/CgWindowResizeEvent.h \
 		CgEvents/CgLoadMeshEvent.h \
 		CgEvents/CgLoadHalfEdgeMeshEvent.h \
@@ -1019,7 +1034,13 @@ CgTriangleMesh.o: CgSceneGraph/CgTriangleMesh.cpp CgSceneGraph/CgTriangleMesh.h 
 		CgUtils/ObjLoader.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CgTriangleMesh.o CgSceneGraph/CgTriangleMesh.cpp
 
-ObjLoader.o: CgUtils/ObjLoader.cpp CgUtils/ObjLoader.h
+ObjLoader.o: CgUtils/ObjLoader.cpp CgUtils/ObjLoader.h \
+		CgSceneGraph/CgHalfEdgePrimitives.h \
+		CgBase/CgBaseHalfdgePrimitives.h \
+		CgSceneGraph/CgHalfEdgeTriangleMesh.h \
+		CgBase/CgBaseHalfEdgeTriangleMesh.h \
+		CgBase/CgBaseRenderableObject.h \
+		CgBase/CgEnums.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ObjLoader.o CgUtils/ObjLoader.cpp
 
 CgTrackballEvent.o: CgEvents/CgTrackballEvent.cpp CgEvents/CgTrackballEvent.h \

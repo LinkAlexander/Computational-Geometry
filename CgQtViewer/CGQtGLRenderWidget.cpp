@@ -245,7 +245,7 @@ void CgQtGLRenderWidget::initializeGL()
     glClearColor(0, 0, 0, m_transparent ? 0 : 1);
     m_program = new QOpenGLShaderProgram;
 
-    setShaderSourceFiles("../Source-COG/CgShader/simple.vert","../Source-COG/CgShader/simple.frag");
+    setShaderSourceFiles("../CgShader/simple.vert","../CgShader/simple.frag");
     setUniformValue("mycolor",glm::vec4(0.0,1.0,0.0,1.0));
 
     m_program->link();
