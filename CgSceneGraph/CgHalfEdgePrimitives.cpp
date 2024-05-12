@@ -1,5 +1,6 @@
 #include "CgHalfEdgePrimitives.h"
 #include <vector>
+#include <iostream>
 
 CgHeFace::CgHeFace()
 {
@@ -122,12 +123,11 @@ void CgHeVert::calculateNormal()
  */
 const std::vector<CgHeEdge*> CgHeVert::getEdgesOfVertex()
 {
-    CgHeVert* vert = this;
-
     // define starting edge
-    CgHeEdge* edge = (CgHeEdge*)vert->edge();
+    CgHeEdge* edge = (CgHeEdge*)this->m_edge;
+
     // for border cases
-    CgHeEdge* edge_temp = (CgHeEdge*)vert->edge();
+    CgHeEdge* edge_temp = (CgHeEdge*)this->m_edge;
     std::vector<CgHeEdge*> edges;
     std::vector<CgHeEdge*> edges_forward;
     std::vector<CgHeEdge*> edges_backward;
@@ -136,14 +136,14 @@ const std::vector<CgHeEdge*> CgHeVert::getEdgesOfVertex()
 
     // get all edges until you are at the starting point again or at a border
     do {
-        if (edge->pair() != NULL) {
+        if (edge->m_pair) {
             edge = (CgHeEdge*)edge->pair()->next();
             edges_forward.push_back(edge);
         } else {
             isBorder = true;
             break;
         }
-    } while (edge != vert->edge());
+    } while (edge != this->edge());
 
     // border case: walk into other direction from original starting point
     // to get all other edges
@@ -151,21 +151,21 @@ const std::vector<CgHeEdge*> CgHeVert::getEdgesOfVertex()
     // instead of edge-pair-next go edge-next-next-pair
     if (isBorder) {
         do {
-            if (edge_temp->next()->next()->pair() != NULL) {
+            if (edge_temp->next()->next()->pair() != nullptr) {
 
                 edge_temp = (CgHeEdge*)edge_temp->next()->next()->pair();
                 edges_backward.push_back(edge_temp);
             } else {
                 break;
             }
-        } while (edge_temp != vert->edge());
+        } while (edge_temp != this->edge());
     }
     //Save the edges, in the correct order, without holes
     for (int i = edges_backward.size() - 1; i >= 0; i--) {
         CgHeEdge* edge_backward = edges_backward[i];
         edges.push_back(edge_backward);
     }
-    edges.push_back((CgHeEdge*)vert->edge());
+    edges.push_back((CgHeEdge*)this->edge());
     for (CgHeEdge* edge_forward : edges_forward) {
         edges.push_back(edge_forward);
     }

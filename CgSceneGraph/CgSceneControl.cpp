@@ -134,7 +134,7 @@ void CgSceneControl::calculatePickRay(double x, double y)
     }
     if(m_he_mesh) {
         m_he_mesh->applyPickRay(pickRayStart, pickRayDirection);
-        m_renderer->init(m_triangle_mesh);
+        m_renderer->init(m_he_mesh);
     }
 
     m_renderer->redraw();

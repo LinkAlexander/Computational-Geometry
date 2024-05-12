@@ -36,11 +36,19 @@ void CgHalfEdgeTriangleMesh::loadDemoTriangles()
     edge2->m_next = edge3;
     edge3->m_next = edge1;
     face1->m_edge = edge1;
+    edge1->m_face = face1;
+    edge2->m_face = face1;
+    edge3->m_face = face1;
+
 
     edge4->m_next = edge5;
     edge5->m_next = edge6;
     edge6->m_next = edge4;
     face2->m_edge = edge4;
+    edge4->m_face = face2;
+    edge5->m_face = face2;
+    edge6->m_face = face2;
+
 
     vertex1->m_position = glm::vec3(0.0, 0.0, 0.0);
     vertex2->m_position = glm::vec3(0.0, 1.0, 0.0);
@@ -62,6 +70,11 @@ void CgHalfEdgeTriangleMesh::loadDemoTriangles()
 
     edge2->m_pair = edge4;
     edge4->m_pair = edge2;
+
+    edge1->m_pair = nullptr;
+    edge3->m_pair = nullptr;
+    edge5->m_pair = nullptr;
+    edge6->m_pair = nullptr;
 
     // store into lists
     m_faces.push_back(face1);
@@ -148,7 +161,7 @@ void CgHalfEdgeTriangleMesh::loadFromVertexList(std::vector<glm::vec3> temp_vert
             vert2->m_edge = edge2;
 
         // connect the edges
-        // Clockwise TODO Maybe change this
+        // Clockwise
         edge0->m_next = edge1;
         edge1->m_next = edge2;
         edge2->m_next = edge0;
@@ -599,20 +612,25 @@ void CgHalfEdgeTriangleMesh::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pick
     // Get the selected point closest to the pick ray
     size_t centerIndex = getClosestPointToRay(pickRayStart, pickRayDirection);
 
-    std::vector<glm::vec3> TwoRingNeighbors;
-
     bool isBorderVert = false;
     CgHeVert* vert = (CgHeVert*)m_verts[centerIndex];
 
-    std::vector<CgHeVert*> OneRingNeighborVerts = vert[centerIndex].getNeighborVerts(&isBorderVert);
+    std::vector<CgHeVert*> OneRingNeighborVerts = vert->getNeighborVerts(&isBorderVert);
     std::vector<CgHeVert*> TwoRingNeighborVerts;
     for(auto vert : OneRingNeighborVerts) {
         isBorderVert = false;
-        for(auto secondVert : vert->getNeighborVerts(&isBorderVert)) {
+        for(auto secondVert: vert->getNeighborVerts(&isBorderVert)) {
             TwoRingNeighborVerts.push_back(secondVert);
         }
     }
+    // Color all vertices green
+    for (auto base_vert : this->m_verts) {
+        CgHeVert* vert = (CgHeVert*)base_vert;
+        vert->m_color = { 0.0, 1.0, 0.0 };
+    }
 
-    for(auto vert : TwoRingNeighborVerts) {}
-    vert->m_color = {1,1,1};
+    for(auto vert : TwoRingNeighborVerts) {
+        vert->m_color = {1,1,1};
+    }
+
 }
