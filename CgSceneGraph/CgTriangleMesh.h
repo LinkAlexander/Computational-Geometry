@@ -37,6 +37,7 @@ public:
     const glm::vec3 getCenter() const;
 
 
+
 private:
 
     std::vector<glm::vec3> m_vertices;

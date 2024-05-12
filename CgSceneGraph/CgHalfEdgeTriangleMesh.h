@@ -29,6 +29,8 @@ public:
     const glm::vec3 getCenter() const;
     void loopSubdivision();
 
+    void applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirection);
+
 private:
     std::vector<CgBaseHeFace*> m_faces;
     std::vector<CgBaseHeVert*> m_verts;
@@ -41,6 +43,11 @@ private:
     void loadFromVertexList(std::vector<glm::vec3> temp_vertices, std::vector<unsigned int> temp_indices);
 
     float calculateLoopSubdivisionBeta(int n);
+
+    size_t getClosestPointToRay(glm::vec3 rayStart, glm::vec3 rayDirection);
+
+    float distanceRayToPoint(glm::vec3 rayStart, glm::vec3 rayDirection, glm::vec3 point);
+
 };
 
 inline Cg::ObjectType CgHalfEdgeTriangleMesh::getType() const { return m_type; }

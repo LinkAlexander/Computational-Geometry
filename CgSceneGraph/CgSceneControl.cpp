@@ -124,12 +124,17 @@ void CgSceneControl::calculatePickRay(double x, double y)
     pickRayStart = raystart;
     pickRayDirection = rayend - raystart;
 
+    glm::vec3 pickRayStart = raystart;
+    glm::vec3 pickRayDirection = rayend - raystart;
+
     // Apply the pick ray to point cloud
     if (m_pointcloud) {
-        glm::vec3 pickRayStart = raystart;
-        glm::vec3 pickRayDirection = rayend - raystart;
         m_pointcloud->applyPickRay(pickRayStart, pickRayDirection);
         m_renderer->init(m_pointcloud);
+    }
+    if(m_he_mesh) {
+        m_he_mesh->applyPickRay(pickRayStart, pickRayDirection);
+        m_renderer->init(m_triangle_mesh);
     }
 
     m_renderer->redraw();

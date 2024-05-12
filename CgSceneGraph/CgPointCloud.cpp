@@ -196,7 +196,7 @@ float CgPointCloud::distanceRayToPoint(glm::vec3 rayStart, glm::vec3 rayDirectio
 }
 
 /**
- * @brief CgKdTree::getClosestPointToRay Returns the index of the point which is the nearest to the picking ray
+ * @brief getClosestPointToRay Returns the index of the point which is the nearest to the picking ray
  * @param rayStart initial point of the ray
  * @param rayDirection direction of the ray
  * @return index of the point which is the nearest to the picking ray

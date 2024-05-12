@@ -17,76 +17,76 @@ CgHalfEdgeTriangleMesh::CgHalfEdgeTriangleMesh()
 void CgHalfEdgeTriangleMesh::loadDemoTriangles()
 {
 
-    CgHeFace* nf1 = new CgHeFace();
-    CgHeFace* nf2 = new CgHeFace();
+    CgHeFace* face1 = new CgHeFace();
+    CgHeFace* face2 = new CgHeFace();
 
-    CgHeVert* nv1 = new CgHeVert();
-    CgHeVert* nv2 = new CgHeVert();
-    CgHeVert* nv3 = new CgHeVert();
-    CgHeVert* nv4 = new CgHeVert();
+    CgHeVert* vertex1 = new CgHeVert();
+    CgHeVert* vertex2 = new CgHeVert();
+    CgHeVert* vertex3 = new CgHeVert();
+    CgHeVert* vertex4 = new CgHeVert();
 
-    CgHeEdge* n1 = new CgHeEdge();
-    CgHeEdge* n2 = new CgHeEdge();
-    CgHeEdge* n3 = new CgHeEdge();
-    CgHeEdge* n4 = new CgHeEdge();
-    CgHeEdge* n5 = new CgHeEdge();
-    CgHeEdge* n6 = new CgHeEdge();
+    CgHeEdge* edge1 = new CgHeEdge();
+    CgHeEdge* edge2 = new CgHeEdge();
+    CgHeEdge* edge3 = new CgHeEdge();
+    CgHeEdge* edge4 = new CgHeEdge();
+    CgHeEdge* edge5 = new CgHeEdge();
+    CgHeEdge* edge6 = new CgHeEdge();
 
-    n1->m_next = n2;
-    n2->m_next = n3;
-    n3->m_next = n1;
-    nf1->m_edge = n1;
+    edge1->m_next = edge2;
+    edge2->m_next = edge3;
+    edge3->m_next = edge1;
+    face1->m_edge = edge1;
 
-    n4->m_next = n5;
-    n5->m_next = n6;
-    n6->m_next = n4;
-    nf2->m_edge = n4;
+    edge4->m_next = edge5;
+    edge5->m_next = edge6;
+    edge6->m_next = edge4;
+    face2->m_edge = edge4;
 
-    nv1->m_position = glm::vec3(0.0, 0.0, 0.0);
-    nv2->m_position = glm::vec3(0.0, 1.0, 0.0);
-    nv3->m_position = glm::vec3(1.0, 1.0, 0.0);
-    nv4->m_position = glm::vec3(1.0, 0.0, 0.0);
+    vertex1->m_position = glm::vec3(0.0, 0.0, 0.0);
+    vertex2->m_position = glm::vec3(0.0, 1.0, 0.0);
+    vertex3->m_position = glm::vec3(1.0, 1.0, 0.0);
+    vertex4->m_position = glm::vec3(1.0, 0.0, 0.0);
 
-    nv1->m_edge = n1;
-    nv2->m_edge = n2;
-    nv3->m_edge = n6;
-    nv4->m_edge = n3;
+    vertex1->m_edge = edge1;
+    vertex2->m_edge = edge2;
+    vertex3->m_edge = edge6;
+    vertex4->m_edge = edge3;
 
-    n4->m_vert = nv4;
-    n5->m_vert = nv2;
-    n6->m_vert = nv3;
+    edge4->m_vert = vertex4;
+    edge5->m_vert = vertex2;
+    edge6->m_vert = vertex3;
 
-    n1->m_vert = nv1;
-    n2->m_vert = nv2;
-    n3->m_vert = nv4;
+    edge1->m_vert = vertex1;
+    edge2->m_vert = vertex2;
+    edge3->m_vert = vertex4;
 
-    n2->m_pair = n4;
-    n4->m_pair = n2;
+    edge2->m_pair = edge4;
+    edge4->m_pair = edge2;
 
     // store into lists
-    m_faces.push_back(nf1);
-    m_faces.push_back(nf2);
+    m_faces.push_back(face1);
+    m_faces.push_back(face2);
 
-    m_verts.push_back(nv1);
-    m_verts.push_back(nv2);
-    m_verts.push_back(nv3);
-    m_verts.push_back(nv4);
+    m_verts.push_back(vertex1);
+    m_verts.push_back(vertex2);
+    m_verts.push_back(vertex3);
+    m_verts.push_back(vertex4);
 
-    m_edges.push_back(n1);
-    m_edges.push_back(n2);
-    m_edges.push_back(n3);
-    m_edges.push_back(n4);
-    m_edges.push_back(n5);
-    m_edges.push_back(n6);
+    m_edges.push_back(edge1);
+    m_edges.push_back(edge2);
+    m_edges.push_back(edge3);
+    m_edges.push_back(edge4);
+    m_edges.push_back(edge5);
+    m_edges.push_back(edge6);
 
     //attributes
-    nv1->m_color = glm::vec3(0.0, 1.0, 1.0);
-    nv2->m_color = glm::vec3(0.0, 1.0, 1.0);
-    nv3->m_color = glm::vec3(0.0, 1.0, 1.0);
-    nv4->m_color = glm::vec3(0.0, 1.0, 1.0);
+    vertex1->m_color = glm::vec3(0.0, 1.0, 1.0);
+    vertex2->m_color = glm::vec3(0.0, 1.0, 1.0);
+    vertex3->m_color = glm::vec3(0.0, 1.0, 1.0);
+    vertex4->m_color = glm::vec3(0.0, 1.0, 1.0);
 
-    nf1->m_normal = glm::vec3(0.0, 0.0, 1.0);
-    nf2->m_normal = glm::vec3(0.0, 0.0, 1.0);
+    face1->m_normal = glm::vec3(0.0, 0.0, 1.0);
+    face2->m_normal = glm::vec3(0.0, 0.0, 1.0);
 }
 
 /**
@@ -555,4 +555,64 @@ const glm::vec3 CgHalfEdgeTriangleMesh::getCenter() const
 float CgHalfEdgeTriangleMesh::calculateLoopSubdivisionBeta(int n)
 {
     return (1.0 / n) * ((5.0 / 8.0) - pow((3.0 / 8.0) + (1.0 / 4.0) * cos(2.0 * M_PIf64 / n), 2.0));
+}
+
+/**
+ * @brief getClosestPointToRay Returns the index of the point which is the nearest to the picking ray
+ * @param rayStart initial point of the ray
+ * @param rayDirection direction of the ray
+ * @return index of the point which is the nearest to the picking ray
+ */
+size_t CgHalfEdgeTriangleMesh::getClosestPointToRay(glm::vec3 rayStart, glm::vec3 rayDirection)
+{
+    // index and distance which are closest to the ray
+    size_t closestIndex = 0;
+    float closestDist = INFINITY;
+
+    // go through all positions and look if there are any which are closer to the ray than the
+    // previously found
+    for (size_t i = 0; i < m_verts.size(); i++) {
+        glm::vec3 position = m_verts[i]->position();
+        float dist = distanceRayToPoint(rayStart, rayDirection, position);
+        if (dist < closestDist) {
+            closestIndex = i;
+            closestDist = dist;
+        }
+    }
+    return closestIndex;
+}
+
+/**
+ * @brief distanceRayToPoint Calculates the distance of the picking ray to the selected point
+ * @param rayStart initial point of the ray
+ * @param rayDirection direction of the ray
+ * @param point selected point
+ * @return the distance between point and ray
+ */
+float CgHalfEdgeTriangleMesh::distanceRayToPoint(glm::vec3 rayStart, glm::vec3 rayDirection, glm::vec3 point)
+{
+    return glm::length(glm::cross(rayDirection, point - rayStart));
+}
+
+void CgHalfEdgeTriangleMesh::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirection)
+{
+    // Get the selected point closest to the pick ray
+    size_t centerIndex = getClosestPointToRay(pickRayStart, pickRayDirection);
+
+    std::vector<glm::vec3> TwoRingNeighbors;
+
+    bool isBorderVert = false;
+    CgHeVert* vert = (CgHeVert*)m_verts[centerIndex];
+
+    std::vector<CgHeVert*> OneRingNeighborVerts = vert[centerIndex].getNeighborVerts(&isBorderVert);
+    std::vector<CgHeVert*> TwoRingNeighborVerts;
+    for(auto vert : OneRingNeighborVerts) {
+        isBorderVert = false;
+        for(auto secondVert : vert->getNeighborVerts(&isBorderVert)) {
+            TwoRingNeighborVerts.push_back(secondVert);
+        }
+    }
+
+    for(auto vert : TwoRingNeighborVerts) {}
+    vert->m_color = {1,1,1};
 }
