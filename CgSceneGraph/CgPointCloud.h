@@ -18,8 +18,8 @@ public:
   Cg::ObjectType getType() const;
   unsigned int getID() const;
 
-
-  //inherited from CgBasePointCloud
+    size_t getClosestPointToRay(glm::vec3 rayStart, glm::vec3 rayDirection);
+    //inherited from CgBasePointCloud
 
   // vertex positions in local coordinates
   const std::vector<glm::vec3>& getVertices()     const;
@@ -44,6 +44,7 @@ public:
 
   // the center of gravity of the object, for rendering
   const glm::vec3 getCenter() const;
+  void applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirection);
 
 private:
 
@@ -74,6 +75,9 @@ private:
     const unsigned int m_id;
 
 
+
+
+    float distanceRayToPoint(glm::vec3 rayStart, glm::vec3 rayDirection, glm::vec3 point);
 };
 
 inline Cg::ObjectType  CgPointCloud::getType() const {return m_type;}

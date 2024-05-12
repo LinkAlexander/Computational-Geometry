@@ -71,55 +71,68 @@ CgSceneControl::~CgSceneControl()
 
 void CgSceneControl::calculatePickRay(double x, double y)
 {
-  double w = (double) m_renderer->getViewportWidth();
-  double h = (double) m_renderer->getViewportHeight();
+    double w = (double)m_renderer->getViewportWidth();
+    double h = (double)m_renderer->getViewportHeight();
 
-  // normalize into [-1;1]
-  x=2.0*x / w -1.0;
-  if (x<-1.0) x=-1.0;
-  if (x>1.0) x=1.0;
+    // normalize into [-1;1]
+    x = 2.0 * x / w - 1.0;
+    if (x < -1.0)
+        x = -1.0;
+    if (x > 1.0)
+        x = 1.0;
 
-  y=2.0*y / h -1.0;
-  if (y<-1.0) y=-1.0;
-  if (y>1.0) y=1.0;
+    y = 2.0 * y / h - 1.0;
+    if (y < -1.0)
+        y = -1.0;
+    if (y > 1.0)
+        y = 1.0;
 
-  // change to right handed coordinate system
-  y=-y;
+    // change to right handed coordinate system
+    y = -y;
 
-  glm::mat4 inverse_proj=glm::inverse(m_proj_matrix);
+    glm::mat4 inverse_proj = glm::inverse(m_proj_matrix);
 
-  //unproject point on front clipping plane
-  glm::vec4 p(x,y,-0.01,1);
-  glm::vec4 q= inverse_proj*p;
-  q/= q.w;
+    //unproject point on front clipping plane
+    glm::vec4 p(x, y, -0.01, 1);
+    glm::vec4 q = inverse_proj * p;
+    q /= q.w;
 
-  //unproject point on back clipping plane
-  glm::vec4 r(x,y,1.0,1);
-  glm::vec4 s= inverse_proj*r;
-  s/= s.w;
+    //unproject point on back clipping plane
+    glm::vec4 r(x, y, 1.0, 1);
+    glm::vec4 s = inverse_proj * r;
+    s /= s.w;
 
-  //construct current modelview matrix by hand, since there is no scenegraph
-  m_current_transformation = glm::translate(m_current_transformation,-m_center);
-  glm::mat4 mv_matrix = m_lookAt_matrix * m_trackball_rotation* m_current_transformation ;
-  m_current_transformation = glm::translate(m_current_transformation,m_center);
+    //construct current modelview matrix by hand, since there is no scenegraph
+    m_current_transformation = glm::translate(m_current_transformation, -m_center);
+    glm::mat4 mv_matrix = m_lookAt_matrix * m_trackball_rotation * m_current_transformation;
+    m_current_transformation = glm::translate(m_current_transformation, m_center);
 
+    // convert pick ray into local "bunny coordinates"
+    glm::mat4 mv_matrix_inv = glm::inverse(mv_matrix);
+    glm::vec4 raystart = mv_matrix_inv * q;
+    glm::vec4 rayend = mv_matrix_inv * s;
 
-  // convert pick ray into local "bunny coordinates"
-  glm::mat4 mv_matrix_inv = glm::inverse(mv_matrix);
-  glm::vec4 raystart=mv_matrix_inv*q;
-  glm::vec4 rayend=mv_matrix_inv*s;
+    // init new CgPolyline to draw the pick ray
+    if (m_select_ray != NULL)
+        delete m_select_ray;
+    std::vector<glm::vec3> pointlist;
+    pointlist.push_back(raystart);
+    pointlist.push_back(rayend);
+    m_select_ray = new CgPolyLine(33, pointlist);
+    m_renderer->init(m_select_ray);
 
-  // init new CgPolyline to draw the pick ray
-  if(m_select_ray!=NULL)
-    delete m_select_ray;
-  std::vector<glm::vec3> pointlist;
-  pointlist.push_back(raystart);
-  pointlist.push_back(rayend);
-  m_select_ray = new CgPolyLine(33,pointlist);
-  m_renderer->init(m_select_ray);
+    pickRayStart = raystart;
+    pickRayDirection = rayend - raystart;
 
+    // Apply the pick ray to point cloud
+    if (m_pointcloud) {
+        glm::vec3 pickRayStart = raystart;
+        glm::vec3 pickRayDirection = rayend - raystart;
+        m_pointcloud->applyPickRay(pickRayStart, pickRayDirection);
+        m_renderer->init(m_pointcloud);
+    }
 
-  m_renderer->redraw();
+    m_renderer->redraw();
 }
 
 

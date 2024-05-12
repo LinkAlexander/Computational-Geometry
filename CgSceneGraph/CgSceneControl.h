@@ -57,6 +57,8 @@ private:
     // interface for OpenGl Rendering
     CgBaseRenderer* m_renderer;
 
+    glm::vec3 pickRayStart;
+    glm::vec3 pickRayDirection;
 };
 
 #endif // CGSCENECONTROL_H

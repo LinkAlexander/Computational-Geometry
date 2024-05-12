@@ -147,9 +147,6 @@ glm::vec3 CgPointCloud::getPerpendicularVector(glm::vec3 arg)
   return glm::normalize(glm::vec3(-arg[1],arg[0],0.0));
 }
 
-
-
-
 const glm::vec3 CgPointCloud::getCenter() const
 {
   glm::vec3 center(0.);
@@ -159,6 +156,68 @@ const glm::vec3 CgPointCloud::getCenter() const
     }
   center/=(double)m_vertices.size();
   return center;
+}
+
+/**
+ * @brief CgPointCloud::applyPickRay Apply the given pick-ray to this point cloud
+ * @param pickRayStart The start of the pick-ray
+ * @param pickRayDirection The direction of the pick-ray
+ */
+void CgPointCloud::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirection)
+{
+    // Get the selected point closest to the pick ray
+    size_t centerIndex = getClosestPointToRay(pickRayStart, pickRayDirection);
+
+    // Get the nearest neighbors of the selected point
+    unsigned int k = 50;
+    std::vector<int> neighbors = getNearestNeighbors(centerIndex, k);
+
+    // Color all vertices green
+    for (glm::vec3& color : m_vertex_colors) {
+        color = { 0.0, 1.0, 0.0 };
+    }
+
+    // Color all neighbors blue
+    for (unsigned int i = 0; i < k; i++) {
+        m_vertex_colors[neighbors[i]] = glm::vec3(1.0, 1.0, 1.0);
+    }
+}
+
+/**
+ * @brief distanceRayToPoint Calculates the distance of the picking ray to the selected point
+ * @param rayStart initial point of the ray
+ * @param rayDirection direction of the ray
+ * @param point selected point
+ * @return the distance between point and ray
+ */
+float CgPointCloud::distanceRayToPoint(glm::vec3 rayStart, glm::vec3 rayDirection, glm::vec3 point)
+{
+    return glm::length(glm::cross(rayDirection, point - rayStart));
+}
+
+/**
+ * @brief CgKdTree::getClosestPointToRay Returns the index of the point which is the nearest to the picking ray
+ * @param rayStart initial point of the ray
+ * @param rayDirection direction of the ray
+ * @return index of the point which is the nearest to the picking ray
+ */
+size_t CgPointCloud::getClosestPointToRay(glm::vec3 rayStart, glm::vec3 rayDirection)
+{
+    // index and distance which are closest to the ray
+    size_t closestIndex = 0;
+    float closestDist = INFINITY;
+
+    // go through all positions and look if there are any which are closer to the ray than the
+    // previously found
+    for (size_t i = 0; i < m_vertices.size(); i++) {
+        glm::vec3 position = m_vertices[i];
+        float dist = distanceRayToPoint(rayStart, rayDirection, position);
+        if (dist < closestDist) {
+            closestIndex = i;
+            closestDist = dist;
+        }
+    }
+    return closestIndex;
 }
 
 const std::vector<glm::vec2>& CgPointCloud::getSplatScalings() const
