@@ -5,6 +5,7 @@
 #include <map>
 #include <utility>
 #include <iostream>
+#include <set>
 
 CgHalfEdgeTriangleMesh::CgHalfEdgeTriangleMesh()
     : m_type(Cg::HalfEdgeTriangleMesh)
@@ -616,21 +617,21 @@ void CgHalfEdgeTriangleMesh::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pick
     CgHeVert* vert = (CgHeVert*)m_verts[centerIndex];
 
     std::vector<CgHeVert*> OneRingNeighborVerts = vert->getNeighborVerts(&isBorderVert);
-    std::vector<CgHeVert*> TwoRingNeighborVerts;
+    std::set<CgHeVert*> TwoRingNeighborVerts;
     for(auto vert : OneRingNeighborVerts) {
         isBorderVert = false;
         for(auto secondVert: vert->getNeighborVerts(&isBorderVert)) {
-            TwoRingNeighborVerts.push_back(secondVert);
+            TwoRingNeighborVerts.insert(secondVert);
         }
     }
     // Color all vertices green
     for (auto base_vert : this->m_verts) {
         CgHeVert* vert = (CgHeVert*)base_vert;
-        vert->m_color = { 0.0, 1.0, 0.0 };
+        vert->m_color = { 0.0, 1.0, 1.0 };
     }
 
     for(auto vert : TwoRingNeighborVerts) {
-        vert->m_color = {1,1,1};
+        vert->m_color = {1,0,0};
     }
 
 }

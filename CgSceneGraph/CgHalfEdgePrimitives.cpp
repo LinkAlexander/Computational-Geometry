@@ -131,7 +131,6 @@ const std::vector<CgHeEdge*> CgHeVert::getEdgesOfVertex()
     std::vector<CgHeEdge*> edges;
     std::vector<CgHeEdge*> edges_forward;
     std::vector<CgHeEdge*> edges_backward;
-
     bool isBorder = false;
 
     // get all edges until you are at the starting point again or at a border

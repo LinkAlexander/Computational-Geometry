@@ -18,7 +18,7 @@ m_id(id)
 
     m_vertices.push_back(glm::vec3(0.0,0.0,0.0));
     m_vertex_normals.push_back(glm::vec3(0.0,0.0,1.0));
-    m_vertex_colors.push_back(glm::vec3(0.0,0.0,1.0));
+    m_vertex_colors.push_back(glm::vec3(0.0,1.0,1.0));
 
     calculateSplatOrientations();
 
@@ -86,7 +86,7 @@ void CgPointCloud::init( std::string filename, bool cheat_normals)
     //add a standard color for each point if lighting turned off
     for(unsigned int i=0;i<m_vertices.size();i++)
       {
-          m_vertex_colors.push_back(glm::vec3(0.0,1.0,0.0));
+          m_vertex_colors.push_back(glm::vec3(0.0,1.0,1.0));
       }
 
 
@@ -172,14 +172,14 @@ void CgPointCloud::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirecti
     unsigned int k = 50;
     std::vector<int> neighbors = getNearestNeighbors(centerIndex, k);
 
-    // Color all vertices green
+    // Color all vertices cyan
     for (glm::vec3& color : m_vertex_colors) {
-        color = { 0.0, 1.0, 0.0 };
+        color = { 0.0, 1.0, 1.0 };
     }
 
-    // Color all neighbors blue
+    // Color all neighbors red
     for (unsigned int i = 0; i < k; i++) {
-        m_vertex_colors[neighbors[i]] = glm::vec3(1.0, 1.0, 1.0);
+        m_vertex_colors[neighbors[i]] = glm::vec3(1.0, 0.0, 0.0);
     }
 }
 
