@@ -58,6 +58,7 @@ set(SOURCES
         CgUtils/ObjLoader.cpp CgUtils/ObjLoader.h
         main.cpp
         CgEvents/CgButtonPressedEvent.cpp
+        CgSceneGraph/CgKdTree.cpp
 )
 
 

@@ -65,8 +65,8 @@ CgQtGui::CgQtGui(CgQtMainApplication *mw)
     createOptionPanelExample2(otheropt);
 
     QTabWidget* m_tabs = new QTabWidget();
-    m_tabs->addTab(opt,"&My Tab1");
-    m_tabs->addTab(otheropt,"&My Tab2");
+    m_tabs->addTab(opt,"&Subdivsion");
+    m_tabs->addTab(otheropt,"&KD-Tree");
     container->addWidget(m_tabs);
 
     m_tabs->setMaximumWidth(400);
