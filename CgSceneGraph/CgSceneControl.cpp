@@ -409,7 +409,7 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
     /* KD Tree */
 
     // Update split planes
-    if (e->getType() & Cg::CgKdTreeUpdateDisplaySplitPlanesEvent) {
+    if ( m_pointcloud && e->getType() & Cg::CgKdTreeUpdateDisplaySplitPlanesEvent) {
         CgKdTreeUpdateDisplaySplitPlanesEvent* splitPlanesEvent = (CgKdTreeUpdateDisplaySplitPlanesEvent*)e;
         size_t currentlyDisplayedKdTreeSplitPlanes;
         if (splitPlanesEvent->getShowSplitPlanes()) {
