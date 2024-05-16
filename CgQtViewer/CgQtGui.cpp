@@ -4,6 +4,7 @@
 #include "CgQtGui.h"
 #include "CgQtMainApplication.h"
 #include "../CgEvents/CgButtonPressedEvent.h"
+#include "../CgEvents/CgKdTreeUpdateDisplaySplitPlanesEvent.h"
 
 #include "../CgBase/CgEnums.h"
 
@@ -62,11 +63,17 @@ CgQtGui::CgQtGui(CgQtMainApplication *mw)
 
 
     QWidget *otheropt = new QWidget;
-    createOptionPanelExample2(otheropt);
+    createKdTreePanel(otheropt);
+    //-------------------------------------------
+    createSubdividePanel(subdiv);
+    QWidget* kdTree = new QWidget;
+    createKdTreePanel(kdTree);
+    QWidget* mls = new QWidget;
 
     QTabWidget* m_tabs = new QTabWidget();
-    m_tabs->addTab(opt,"&Subdivsion");
-    m_tabs->addTab(otheropt,"&KD-Tree");
+    m_tabs->addTab(subdiv, "&Loop Subdivision");
+    m_tabs->addTab(kdTree, "&Kd Tree");
+    m_tabs->addTab(mls, "&Moving Least Squares");
     container->addWidget(m_tabs);
 
     m_tabs->setMaximumWidth(400);
@@ -166,8 +173,6 @@ void CgQtGui::createSubdividePanel(QWidget* parent)
     tab1_control->addWidget(subdiv);
 
     connect(subdiv, SIGNAL(clicked()), this, SLOT(slotSubDivPressed()));
-
-    parent->setLayout(tab1_control);
 }
 
 void CgQtGui::slotSubDivPressed()
@@ -415,7 +420,54 @@ CgBaseRenderer* CgQtGui::getRenderer()
     return m_glRenderWidget;
 }
 
+void CgQtGui::createKdTreePanel(QWidget* parent)
+{
+    QVBoxLayout* tab_control = new QVBoxLayout();
+    parent->setLayout(tab_control);
+
+    QLabel* displayKdTreeSplitPlanesDepthLabel = new QLabel("Displayed levels of KD tree split planes:");
+    displayKdTreeSplitPlanesDepthLabel->setAlignment(Qt::AlignCenter);
+    tab_control->addWidget(displayKdTreeSplitPlanesDepthLabel);
+
+    displayKdTreeSplitPlanesDepthSpinner = new QSpinBox();
+    tab_control->addWidget(displayKdTreeSplitPlanesDepthSpinner);
+    displayKdTreeSplitPlanesDepthSpinner->setMinimum(1);
+    displayKdTreeSplitPlanesDepthSpinner->setMaximum(6);
+    displayKdTreeSplitPlanesDepthSpinner->setValue(1);
+    displayKdTreeSplitPlanesDepthSpinner->setSuffix(" levels");
+    connect(displayKdTreeSplitPlanesDepthSpinner, SIGNAL(valueChanged(int)), this, SLOT(displayKdTreeSplitPlanesDepthSpinnerChanged()));
+    tab_control->addWidget(displayKdTreeSplitPlanesDepthSpinner);
+
+    displayKdTreeSplitPlanesCheckbox = new QCheckBox("Display KD tree split planes");
+    displayKdTreeSplitPlanesCheckbox->setCheckable(true);
+    displayKdTreeSplitPlanesCheckbox->setChecked(false);
+    connect(displayKdTreeSplitPlanesCheckbox, SIGNAL(clicked()), this, SLOT(displayKdTreeSplitPlanesCheckboxChanged()));
+    tab_control->addWidget(displayKdTreeSplitPlanesCheckbox);
+}
 
 
+void CgQtGui::updateDisplayKdTreeSplitPlanes()
+{
+    bool displaySplitPlanes = displayKdTreeSplitPlanesCheckbox->isChecked();
+    size_t displayDepth = displayKdTreeSplitPlanesDepthSpinner->value();
+
+    CgBaseEvent* e = new CgKdTreeUpdateDisplaySplitPlanesEvent(displaySplitPlanes, displayDepth);
+    notifyObserver(e);
+}
 
 
+void CgQtGui::slotKdTreePressed()
+{
+    CgBaseEvent* event = new CgButtonPressedEvent(Cg::CgButtonPressedEvent, KDTREE);
+    notifyObserver(event);
+}
+
+void CgQtGui::displayKdTreeSplitPlanesDepthSpinnerChanged()
+{
+    updateDisplayKdTreeSplitPlanes();
+}
+
+void CgQtGui::displayKdTreeSplitPlanesCheckboxChanged()
+{
+    updateDisplayKdTreeSplitPlanes();
+}

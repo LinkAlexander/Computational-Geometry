@@ -37,6 +37,7 @@ public:
     const glm::vec3 getCenter() const;
 
 
+    void addQuadrangle(glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, glm::vec3 pos4, glm::vec3 color);
 
 private:
 
@@ -52,6 +53,8 @@ private:
 
     const Cg::ObjectType m_type;
     const unsigned int m_id;
+
+    void addQuadrangleMesh(glm::vec3 *vertices, size_t rows, size_t cols, glm::vec3 normal, glm::vec3 color);
 
 };
 

@@ -1,6 +1,7 @@
 #include "CgPointCloud.h"
 #include "CgBase/CgEnums.h"
 #include "CgUtils/ObjLoader.h"
+#include "CgKdTree.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 
@@ -71,6 +72,9 @@ void CgPointCloud::init( std::string filename, bool cheat_normals)
     loader.load(filename);
     loader.getPositionData(m_vertices);
 
+
+    // initialising kdTree
+    kdTree = new CgKdTree(this, 9);
 
     // do this for cheating with the normals
     // you need to replace this by a normal estimation algorithm
@@ -166,7 +170,8 @@ const glm::vec3 CgPointCloud::getCenter() const
 void CgPointCloud::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirection)
 {
     // Get the selected point closest to the pick ray
-    size_t centerIndex = getClosestPointToRay(pickRayStart, pickRayDirection);
+    size_t centerIndex = kdTree->getClosestPointToRay(pickRayStart, pickRayDirection);
+
 
     // Get the nearest neighbors of the selected point
     unsigned int k = 50;
@@ -223,4 +228,14 @@ size_t CgPointCloud::getClosestPointToRay(glm::vec3 rayStart, glm::vec3 rayDirec
 const std::vector<glm::vec2>& CgPointCloud::getSplatScalings() const
 {
   return m_splat_scaling;
+}
+
+/**
+ * @brief CgPointCloud::getSplitPlanes Get the split planes of the KD-Tree for this point cloud
+ * @param maxDepth The max depth of split planes to get
+ * @return The split planes of the KD-Tree for this point cloud
+ */
+std::vector<SplitPlane*> CgPointCloud::getSplitPlanes(size_t maxDepth)
+{
+    return kdTree->getSplitPlanes(maxDepth);
 }

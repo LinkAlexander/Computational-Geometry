@@ -5,6 +5,10 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "CgBase/CgBasePointCloud.h"
+#include "CgKdTree.h"
+
+class CgKdTree;
+class SplitPlane;
 
 class CgPointCloud : public CgBasePointCloud
 {
@@ -46,6 +50,9 @@ public:
   const glm::vec3 getCenter() const;
   void applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirection);
 
+  std::vector<SplitPlane*> getSplitPlanes(size_t maxDepth);
+
+
 private:
 
     // the following demonstration methods have to be replaced by your own calculations
@@ -73,9 +80,7 @@ private:
 
     const Cg::ObjectType m_type;
     const unsigned int m_id;
-
-
-
+    CgKdTree* kdTree;
 
     float distanceRayToPoint(glm::vec3 rayStart, glm::vec3 rayDirection, glm::vec3 point);
 };

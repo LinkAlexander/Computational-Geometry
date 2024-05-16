@@ -104,6 +104,9 @@ private:
     QSpinBox* mySpinBox1;
     void createSubdividePanel(QWidget* panel);
 
+    // kd-tree
+    QSpinBox* displayKdTreeSplitPlanesDepthSpinner;
+    QCheckBox* displayKdTreeSplitPlanesCheckbox;
 
     bool m_use_spats;
     bool m_show_pickray;
@@ -130,10 +133,15 @@ private slots:
     void slotSubDivPressed();
 
 
+    void updateDisplayKdTreeSplitPlanes();
 
+    void createKdTreePanel(QWidget *parent);
 
+    void displayKdTreeSplitPlanesCheckboxChanged();
 
+    void displayKdTreeSplitPlanesDepthSpinnerChanged();
 
+    void slotKdTreePressed();
 };
 
 #endif

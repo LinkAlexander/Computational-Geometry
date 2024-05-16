@@ -4,6 +4,8 @@
 #include "CgBase/CgEnums.h"
 #include "CgEvents/CgMouseEvent.h"
 #include "CgEvents/CgKeyEvent.h"
+#include "CgEvents/CgKdTreeUpdateDisplaySplitPlanesEvent.h"
+
 #include "CgEvents/CgButtonPressedEvent.h"
 #include "CgUtils/CgEventEnums.h"
 #include "CgEvents/CgWindowResizeEvent.h"
@@ -23,6 +25,7 @@
 #include <glm/ext.hpp>
 #include "CgUtils/ObjLoader.h"
 #include "CgMath/CgEigenDecomposition3x3.h"
+#include "CgKdTree.h"
 #include <string>
 #include <CgMath/Eigen/SVD>
 #include <CgMath/Eigen/Core>
@@ -403,7 +406,40 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
         }
     }
 
+    /* KD Tree */
 
+    // Update split planes
+    if (e->getType() & Cg::CgKdTreeUpdateDisplaySplitPlanesEvent) {
+        CgKdTreeUpdateDisplaySplitPlanesEvent* splitPlanesEvent = (CgKdTreeUpdateDisplaySplitPlanesEvent*)e;
+        size_t currentlyDisplayedKdTreeSplitPlanes;
+        if (splitPlanesEvent->getShowSplitPlanes()) {
+            currentlyDisplayedKdTreeSplitPlanes = splitPlanesEvent->getDisplayDepth();
+        } else {
+            currentlyDisplayedKdTreeSplitPlanes = 0;
+        }
+
+        delete m_triangle_mesh;
+        m_triangle_mesh = new CgTriangleMesh();
+
+        if (currentlyDisplayedKdTreeSplitPlanes > 0) {
+            std::vector<SplitPlane*> splitPlanes = m_pointcloud->getSplitPlanes(currentlyDisplayedKdTreeSplitPlanes);
+            for (SplitPlane* splitPlane : splitPlanes) {
+                const glm::vec3 pos1 = splitPlane->getPos1();
+                const glm::vec3 pos2 = splitPlane->getPos2();
+                const glm::vec3 pos3 = splitPlane->getPos3();
+                const glm::vec3 pos4 = splitPlane->getPos4();
+                const CgKdTree::axis3d splitAxis = splitPlane->getSplitAxis();
+
+                glm::vec3 color = { 0, 0, 0 };
+                color[splitAxis] = 255;
+
+                m_triangle_mesh->addQuadrangle(pos1, pos2, pos3, pos4, color);
+            }
+        }
+
+        m_renderer->init(m_triangle_mesh);
+        m_renderer->redraw();
+    }
 
 
     // delete event
