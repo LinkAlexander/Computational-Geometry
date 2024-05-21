@@ -171,7 +171,7 @@ void CgQtGui::createSubdividePanel(QWidget* parent)
 
     QPushButton* subdiv = new QPushButton("&subdivide");
     tab1_control->addWidget(subdiv);
-
+    parent->setLayout(tab1_control);
     connect(subdiv, SIGNAL(clicked()), this, SLOT(slotSubDivPressed()));
 }
 
