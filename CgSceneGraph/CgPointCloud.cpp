@@ -107,6 +107,8 @@ void CgPointCloud::init( std::string filename, bool cheat_normals)
 }
 
 
+
+
 std::vector<int> CgPointCloud::getNearestNeighbors(int current_point,unsigned int k)
 {
 

@@ -144,14 +144,14 @@ CgKdTreeNode::CgKdTreeNode(CgKdTree* kdTree, CgKdTreeNode* parent, std::vector<s
         // sort all Positions on axis from smallest to largest
         std::sort(vertAxisPositions.begin(), vertAxisPositions.end(), std::less<float>());
         if(vertAxisPositions.size()>0){
-            splitValue = vertAxisPositions[(int)vertAxisPositions.size() / 2]; // median
+            splitNode = vertAxisPositions[(int)vertAxisPositions.size() / 2]; // median
         }
 
 
-        // look which positions are smaller and larger (on the axis) than the median (splitValue)
+        // look which positions are smaller and larger (on the axis) than the median (splitNode)
         for (size_t vertIndex : vertexIndices) {
             glm::vec3 vertPos = kdTree->getVertPos(vertIndex);
-            if (vertPos[splitAxis] <= splitValue) {
+            if (vertPos[splitAxis] <= splitNode) {
                 lesserIndices.push_back(vertIndex);
             } else {
                 greaterIndices.push_back(vertIndex);
@@ -187,7 +187,7 @@ LimitedSizePriorityQueue<DistAndIndex> CgKdTreeNode::getNearestNeighbors(size_t 
     CgKdTreeNode* secondCheckedChild = NULL;
 
     // check where the neighbors are
-    if (centerPos[splitAxis] <= splitValue) {
+    if (centerPos[splitAxis] <= splitNode) {
         if (lesserChild) {
             firstCheckedChild = lesserChild;
         }
@@ -270,7 +270,7 @@ std::vector<SplitPlane*> CgKdTreeNode::getSplitPlanes(size_t currentDepth, size_
     // The split plane center is based on the split value
     // The split plane orientation is based on the split axis
     // The split plane size is based on the bounding box
-    SplitPlane* splitPlane = new SplitPlane(min, max, splitAxis, splitValue);
+    SplitPlane* splitPlane = new SplitPlane(min, max, splitAxis, splitNode);
     splitPlanes.push_back(splitPlane);
 
     // Go deeper into the kd tree and add all split planes for all child nodes
@@ -296,7 +296,7 @@ std::vector<SplitPlane*> CgKdTreeNode::getSplitPlanes(size_t currentDepth, size_
 float CgKdTreeNode::distanceToSplitPlane(glm::vec3 pos)
 {
     // The distance is only based on the difference in the split axis
-    return abs(splitValue - pos[splitAxis]);
+    return abs(splitNode - pos[splitAxis]);
 }
 
 /**

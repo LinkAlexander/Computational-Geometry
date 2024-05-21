@@ -51,7 +51,7 @@ class CgKdTreeNode {
 
     private:
         CgKdTree::axis3d splitAxis;
-        float splitValue;
+        float splitNode;
 
         std::vector<size_t> vertIndices;
 

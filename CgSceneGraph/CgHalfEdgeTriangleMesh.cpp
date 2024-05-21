@@ -624,12 +624,12 @@ void CgHalfEdgeTriangleMesh::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pick
             TwoRingNeighborVerts.insert(secondVert);
         }
     }
-    // Color all vertices green
+    // Color all vertices blue
     for (auto base_vert : this->m_verts) {
         CgHeVert* vert = (CgHeVert*)base_vert;
         vert->m_color = { 0.0, 1.0, 1.0 };
     }
-
+    // Color all picked Vertices Red
     for(auto vert : TwoRingNeighborVerts) {
         vert->m_color = {1,0,0};
     }

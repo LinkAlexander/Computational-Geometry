@@ -432,7 +432,7 @@ void CgQtGui::createKdTreePanel(QWidget* parent)
     displayKdTreeSplitPlanesDepthSpinner = new QSpinBox();
     tab_control->addWidget(displayKdTreeSplitPlanesDepthSpinner);
     displayKdTreeSplitPlanesDepthSpinner->setMinimum(1);
-    displayKdTreeSplitPlanesDepthSpinner->setMaximum(6);
+    displayKdTreeSplitPlanesDepthSpinner->setMaximum(9);
     displayKdTreeSplitPlanesDepthSpinner->setValue(1);
     displayKdTreeSplitPlanesDepthSpinner->setSuffix(" levels");
     connect(displayKdTreeSplitPlanesDepthSpinner, SIGNAL(valueChanged(int)), this, SLOT(displayKdTreeSplitPlanesDepthSpinnerChanged()));
