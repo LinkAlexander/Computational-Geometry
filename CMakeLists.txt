@@ -59,6 +59,8 @@ set(SOURCES
         main.cpp
         CgEvents/CgButtonPressedEvent.cpp
         CgSceneGraph/CgKdTree.cpp
+        CgSceneGraph/CgMovingLeastSquares.cpp
+        CgSceneGraph/CgMovingLeastSquares.h
 )
 
 

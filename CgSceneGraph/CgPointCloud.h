@@ -6,6 +6,8 @@
 #include <string>
 #include "CgBase/CgBasePointCloud.h"
 #include "CgKdTree.h"
+#include "CgTriangleMesh.h"
+
 
 class CgKdTree;
 class SplitPlane;
@@ -53,6 +55,11 @@ public:
   std::vector<SplitPlane*> getSplitPlanes(size_t maxDepth);
 
 
+    CgTriangleMesh *smoothSelectedPoint(glm::vec3 pickRayStart, glm::vec3 pickRayDirection, size_t neighborCount,
+                                        size_t bivariateFunctionDegree, size_t plottingSteps);
+
+    void smoothSurface(size_t neighborCount, size_t bivariateFunctionDegree);
+
 private:
 
     // the following demonstration methods have to be replaced by your own calculations
@@ -64,7 +71,7 @@ private:
     glm::vec3 getPerpendicularVector(glm::vec3 arg);
 
     // for demonstration purposes, very inefficient
-    std::vector<int> getNearestNeighbors(int current_point,unsigned int k);
+    std::vector<size_t> getNearestNeighbors(int current_point,unsigned int k);
 
 
     std::vector<glm::vec3> m_vertices;
@@ -83,6 +90,8 @@ private:
     CgKdTree* kdTree;
 
     float distanceRayToPoint(glm::vec3 rayStart, glm::vec3 rayDirection, glm::vec3 point);
+
+    glm::vec3 smoothPoint(size_t centerIndex, size_t neighborCount, size_t bivariateFunctionDegree);
 };
 
 inline Cg::ObjectType  CgPointCloud::getType() const {return m_type;}

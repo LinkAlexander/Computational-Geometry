@@ -41,6 +41,9 @@ namespace Cg{
     CgButtonPressedEvent = 0x0020000,
     // kd-tree
     CgKdTreeUpdateDisplaySplitPlanesEvent = 0x0800000,
+    // moving least squares
+    CgSmoothSurfaceEvent = 0x1000000,
+    CgSmoothSelectedPointNeighborsEvent = 0x2000000,
     }EventType;
 
 

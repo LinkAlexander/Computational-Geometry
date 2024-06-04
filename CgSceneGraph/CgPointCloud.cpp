@@ -2,8 +2,10 @@
 #include "CgBase/CgEnums.h"
 #include "CgUtils/ObjLoader.h"
 #include "CgKdTree.h"
+#include "CgMovingLeastSquares.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
+#include <iostream>
 
 
 CgPointCloud::CgPointCloud():
@@ -109,7 +111,7 @@ void CgPointCloud::init( std::string filename, bool cheat_normals)
 
 
 
-std::vector<int> CgPointCloud::getNearestNeighbors(int current_point,unsigned int k)
+std::vector<size_t> CgPointCloud::getNearestNeighbors(int current_point, unsigned int k)
 {
 
   glm::vec3 q= m_vertices[current_point];
@@ -129,7 +131,7 @@ std::vector<int> CgPointCloud::getNearestNeighbors(int current_point,unsigned in
 
     std::sort(distances.begin(),distances.end());
 
-    std::vector<int> erg;
+    std::vector<size_t> erg;
 
    for(unsigned int i=0;i<k;i++)
     {
@@ -177,7 +179,7 @@ void CgPointCloud::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirecti
 
     // Get the nearest neighbors of the selected point
     unsigned int k = 50;
-    std::vector<int> neighbors = getNearestNeighbors(centerIndex, k);
+    std::vector<size_t> neighbors = getNearestNeighbors(centerIndex, k);
 
     // Color all vertices cyan
     for (glm::vec3& color : m_vertex_colors) {
@@ -240,4 +242,178 @@ const std::vector<glm::vec2>& CgPointCloud::getSplatScalings() const
 std::vector<SplitPlane*> CgPointCloud::getSplitPlanes(size_t maxDepth)
 {
     return kdTree->getSplitPlanes(maxDepth);
+}
+
+/**
+ * @brief CgPointCloud::smoothPoint Smooth the given point based on its neighbors
+ * @param centerIndex Index of the center point to smooth
+ * @param neighborCount The amount of nearest neighbors to use for smoothing
+ * @param bivariateFunctionDegree The degree for the bivariate function to smooth with
+ * @return The smoothed position of the given point
+ */
+glm::vec3 CgPointCloud::smoothPoint(size_t centerIndex, size_t neighborCount, size_t bivariateFunctionDegree)
+{
+    // Get the neirest neighbors
+    std::vector<size_t> n_indices = getNearestNeighbors(centerIndex, neighborCount);
+
+    // Get the position of the center point to smooth
+    glm::vec3 center_pos = m_vertices[centerIndex];
+
+    // Load the neighbor positions
+    std::vector<glm::vec3> neighborPositions(n_indices.size());
+
+    for (size_t i = 0; i < n_indices.size(); i++) {
+        size_t n_index = n_indices[i];
+        glm::vec3 n_pos = m_vertices[n_index];
+        neighborPositions[i] = n_pos;
+    }
+
+    // Calculate the smoothed position for the given center point
+    CgMovingLeastSquares movingLeastSquares;
+    glm::vec3 centerPositionUpdated = movingLeastSquares.smoothBivariate(
+            center_pos, neighborPositions, bivariateFunctionDegree);
+//    std::cout << centerPositionUpdated - center_pos << std::endl;
+    return centerPositionUpdated;
+}
+
+/**
+ * @brief CgPointCloud::smoothSelectedPoint Generate a triangle mesh to plot a fitted bivariate function for a selected point
+ * @param pickRayStart The start of the pick-ray
+ * @param pickRayDirection The direction of the pick-ray
+ * @param neighborCount The amount of nearest neighbors to use for smoothing
+ * @param bivariateFunctionDegree The degree for the bivariate function to smooth with
+ * @return The plotted bivariate function for the given selected point
+ */
+CgTriangleMesh* CgPointCloud::smoothSelectedPoint(glm::vec3 pickRayStart, glm::vec3 pickRayDirection, size_t neighborCount, size_t bivariateFunctionDegree, size_t plottingSteps)
+{
+    // Get the selected point closest to the pick ray
+    size_t centerIndex = kdTree->getClosestPointToRay(pickRayStart, pickRayDirection);
+
+    // Get the nearest neighbor for the selected point
+    std::vector<size_t> neighborIndices = getNearestNeighbors(centerIndex, neighborCount);
+
+    // Get the position of the center point to smooth
+    glm::vec3 center = m_vertices[centerIndex];
+
+    // Load the neighbor positions
+    std::vector<glm::vec3> neighbors(neighborIndices.size());
+
+    for (size_t i = 0; i < neighborIndices.size(); i++) {
+        size_t neighborIndex = neighborIndices[i];
+        glm::vec3 neighborPosition = m_vertices[neighborIndex];
+        neighbors[i] = neighborPosition;
+    }
+
+    Plane tangentPlane = CgMovingLeastSquares::covarianceAnalysis(center, neighbors);
+
+    // Generate the sampling points and values for fitting based on the neighbor positions
+    std::vector<glm::vec2> samplingPoints(neighbors.size());
+    std::vector<float> samplingValues(neighbors.size());
+    for (size_t i = 0; i < neighbors.size(); i++) {
+        glm::vec3 neighbor = neighbors[i];
+        glm::vec3 neighborProjected = tangentPlane.projectPoint(neighbor);
+
+        glm::vec2 samplingPoint {
+                neighborProjected[0],
+                neighborProjected[1]
+        };
+        float samplingValue = neighborProjected[2];
+
+        samplingPoints[i] = samplingPoint;
+        samplingValues[i] = samplingValue;
+    }
+
+    // Fit a bivariate function based on the sampling points and values
+    CgMovingLeastSquares movingLeastSquares;
+    movingLeastSquares.fitBivariate(samplingPoints, samplingValues, bivariateFunctionDegree);
+
+    // Plot the fitted function
+    // Draw a bounding box aligned with the axes of the tangent plane around the sampling points
+    glm::vec2 min = { INFINITY, INFINITY };
+    glm::vec2 max = { -INFINITY, -INFINITY };
+
+    for (glm::vec2 samplingPoint : samplingPoints) {
+        if (samplingPoint[0] < min[0]) {
+            min[0] = samplingPoint[0];
+        }
+        if (samplingPoint[1] < min[1]) {
+            min[1] = samplingPoint[1];
+        }
+        if (samplingPoint[0] > max[0]) {
+            max[0] = samplingPoint[0];
+        }
+        if (samplingPoint[1] > max[1]) {
+            max[1] = samplingPoint[1];
+        }
+    }
+
+    // Step through the bounding box in the given amount of plotting steps
+    // The step size is the size in each dimension divided by the step amount minus one,
+    // because step 0 should capture the minimum axis values
+    glm::vec2 stepSize;
+    stepSize[0] = std::abs(max[0] - min[0]) / (plottingSteps - 1);
+    stepSize[1] = std::abs(max[1] - min[1]) / (plottingSteps - 1);
+
+    // Capture the plotted points as a 2-dimensional matrix
+    glm::vec3 plottedPoints[plottingSteps][plottingSteps];
+
+    for (size_t row = 0; row < plottingSteps; row++) {
+        for (size_t col = 0; col < plottingSteps; col++) {
+
+            // Calculate the sampling point for plotting
+            glm::vec2 pointProjected;
+            pointProjected[0] = min[0] + stepSize[0] * row;
+            pointProjected[1] = min[1] + stepSize[1] * col;
+
+            // Calculate the fitted value for the sampling point
+            float fittedValue = movingLeastSquares.evaluateBivariate(pointProjected);
+            glm::vec3 updatedPointProjected = {
+                    pointProjected[0],
+                    pointProjected[1],
+                    fittedValue
+            };
+
+            // Unproject the point from tangent plane coordinates into global coordinates
+            glm::vec3 plottedPoint = tangentPlane.unprojectPoint(updatedPointProjected);
+
+            // Add the plotted point to the plotting matrix
+            plottedPoints[row][col] = plottedPoint;
+
+            // std::cout << "Projected:   " << row << ", " << col << ": " << updatedPointProjected << std::endl;
+            // std::cout << "Unprojected: " << row << ", " << col << ": " << plottedPoint << std::endl;
+        }
+    }
+
+    // Create a triangle mesh based on the plotted points and color them red
+    CgTriangleMesh* plottedPointMesh = new CgTriangleMesh();
+    glm::vec3 color = { 255, 0, 0 };
+    plottedPointMesh->addQuadrangleMesh((glm::vec3*)plottedPoints, plottingSteps, plottingSteps, tangentPlane.getNormal(), color);
+
+    return plottedPointMesh;
+}
+
+/**
+ * @brief CgPointCloud::smoothSurface Smooth the surface of this point cloud
+ * @param neighborCount The amount of neighbors to base smoothing on
+ * @param bivariateFunctionDegree The degree of the bivariate function to use for smoothing
+ */
+void CgPointCloud::smoothSurface(size_t neighborCount, size_t bivariateFunctionDegree)
+{
+    std::vector<glm::vec3> smoothedVertices(m_vertices.size());
+    // Calculate all smoothed vertex positions
+    for (size_t i = 0; i < m_vertices.size(); i++) {
+        std::cout << "Smooth Vertex " << i << " Of "  << m_vertices.size() << std::endl;
+        glm::vec3 updatedPosition = smoothPoint(i, neighborCount, bivariateFunctionDegree);
+        if(updatedPosition != m_vertices[i]) {
+            std::cout << "Updated Position: " << i << std::endl;
+            m_vertex_colors[i] = { 1.0, 0.0, 0.0};
+        }
+        smoothedVertices[i] = updatedPosition;
+    }
+    // Update all vertex positions to the smoothed version
+    for (size_t i = 0; i < m_vertices.size(); i++) {
+        m_vertices[i] = smoothedVertices[i];
+
+    }
+    std::cout << "done" << std::endl;
 }

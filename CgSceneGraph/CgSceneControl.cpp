@@ -26,6 +26,8 @@
 #include "CgUtils/ObjLoader.h"
 #include "CgMath/CgEigenDecomposition3x3.h"
 #include "CgKdTree.h"
+#include "CgSmoothSelectedPointNeighborsEvent.h"
+#include "CgSmoothSurfaceEvent.h"
 #include <string>
 #include <CgMath/Eigen/SVD>
 #include <CgMath/Eigen/Core>
@@ -440,7 +442,33 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
         m_renderer->init(m_triangle_mesh);
         m_renderer->redraw();
     }
+    /* Moving Least Squares */
 
+    // Smooth selected point
+    if (e->getType() & Cg::CgSmoothSelectedPointNeighborsEvent) {
+        if (m_pointcloud) {
+            CgSmoothSelectedPointNeighborsEvent* ev = (CgSmoothSelectedPointNeighborsEvent*)e;
+            size_t neighborCount = ev->getNeighborCount();
+            size_t bivariateFunctionDegree = ev->getBivariateFunctionDegree();
+            CgTriangleMesh* plottedMesh = m_pointcloud->smoothSelectedPoint(pickRayStart, pickRayDirection, neighborCount, bivariateFunctionDegree, 20);
+
+            delete m_triangle_mesh;
+            m_triangle_mesh = plottedMesh;
+            m_renderer->init(m_triangle_mesh);
+            m_renderer->redraw();
+        }
+    }
+
+    // Smooth surface
+    if (e->getType() & Cg::CgSmoothSurfaceEvent) {
+        CgSmoothSurfaceEvent* ev = (CgSmoothSurfaceEvent*)e;
+        size_t neighborCount = ev->getNeighborCount();
+        size_t bivariateFunctionDegree = ev->getBivariateFunctionDegree();
+        m_pointcloud->smoothSurface(neighborCount, bivariateFunctionDegree);
+
+        m_renderer->init(m_pointcloud);
+        m_renderer->redraw();
+    }
 
     // delete event
     delete e;

@@ -18,6 +18,8 @@
 #include "../CgEvents/CgTrackballEvent.h"
 #include "../CgEvents/CgSplatEvent.h"
 #include "../CgEvents/CgPickRayEvent.h"
+#include "CgSmoothSelectedPointNeighborsEvent.h"
+#include "CgSmoothSurfaceEvent.h"
 
 #include <QSlider>
 #include <QVBoxLayout>
@@ -69,6 +71,7 @@ CgQtGui::CgQtGui(CgQtMainApplication *mw)
     QWidget* kdTree = new QWidget;
     createKdTreePanel(kdTree);
     QWidget* mls = new QWidget;
+    createMovingLeastSquaresPanel(mls);
 
     QTabWidget* m_tabs = new QTabWidget();
     m_tabs->addTab(subdiv, "&Loop Subdivision");
@@ -471,3 +474,58 @@ void CgQtGui::displayKdTreeSplitPlanesCheckboxChanged()
 {
     updateDisplayKdTreeSplitPlanes();
 }
+
+void CgQtGui::createMovingLeastSquaresPanel(QWidget* panel)
+{
+    QVBoxLayout* tab_control = new QVBoxLayout();
+    panel->setLayout(tab_control);
+
+    QLabel* smoothSelectedPointNeighborsRangeLabel = new QLabel("Number of neighbors to use for smoothing:");
+    smoothSelectedPointNeighborsRangeLabel->setAlignment(Qt::AlignCenter);
+    tab_control->addWidget(smoothSelectedPointNeighborsRangeLabel);
+
+    smoothSelectedPointNeighborsRangeSpinner = new QSpinBox();
+    tab_control->addWidget(smoothSelectedPointNeighborsRangeSpinner);
+    smoothSelectedPointNeighborsRangeSpinner->setMinimum(0);
+    smoothSelectedPointNeighborsRangeSpinner->setMaximum(100);
+    smoothSelectedPointNeighborsRangeSpinner->setValue(10);
+    smoothSelectedPointNeighborsRangeSpinner->setSuffix(" neighbors");
+    tab_control->addWidget(smoothSelectedPointNeighborsRangeSpinner);
+
+    QLabel* smoothBivariateFunctionDegreeLabel = new QLabel("Bivariate function degree to use for smoothing:");
+    smoothBivariateFunctionDegreeLabel->setAlignment(Qt::AlignCenter);
+    tab_control->addWidget(smoothBivariateFunctionDegreeLabel);
+
+    smoothBivariateFunctionDegreeSpinner = new QSpinBox();
+    tab_control->addWidget(smoothBivariateFunctionDegreeSpinner);
+    smoothBivariateFunctionDegreeSpinner->setMinimum(0);
+    smoothBivariateFunctionDegreeSpinner->setMaximum(5);
+    smoothBivariateFunctionDegreeSpinner->setValue(2);
+    smoothBivariateFunctionDegreeSpinner->setSuffix(" degree");
+    tab_control->addWidget(smoothBivariateFunctionDegreeSpinner);
+
+    QPushButton* smoothSelectedPointNeighborsButton = new QPushButton("Smooth Selected Point Neighbors");
+    connect(smoothSelectedPointNeighborsButton, SIGNAL(clicked()), this, SLOT(smoothSelectedPointNeighbors()));
+    tab_control->addWidget(smoothSelectedPointNeighborsButton);
+
+    QPushButton* smoothSurfaceButton = new QPushButton("Smooth Surface");
+    connect(smoothSurfaceButton, SIGNAL(clicked()), this, SLOT(smoothSurface()));
+    tab_control->addWidget(smoothSurfaceButton);
+}
+
+void CgQtGui::smoothSelectedPointNeighbors()
+{
+    size_t neighborCount = smoothSelectedPointNeighborsRangeSpinner->value();
+    size_t bivariateFunctionDegree = smoothBivariateFunctionDegreeSpinner->value();
+    CgBaseEvent* e = new CgSmoothSelectedPointNeighborsEvent(neighborCount, bivariateFunctionDegree);
+    notifyObserver(e);
+}
+
+void CgQtGui::smoothSurface()
+{
+    size_t neighborCount = smoothSelectedPointNeighborsRangeSpinner->value();
+    size_t bivariateFunctionDegree = smoothSelectedPointNeighborsRangeSpinner->value();
+    CgBaseEvent* e = new CgSmoothSurfaceEvent(neighborCount, bivariateFunctionDegree);
+    notifyObserver(e);
+}
+

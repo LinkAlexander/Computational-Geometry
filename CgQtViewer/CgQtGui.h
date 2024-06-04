@@ -108,6 +108,10 @@ private:
     QSpinBox* displayKdTreeSplitPlanesDepthSpinner;
     QCheckBox* displayKdTreeSplitPlanesCheckbox;
 
+    // moving least squares
+    QSpinBox* smoothSelectedPointNeighborsRangeSpinner;
+    QSpinBox* smoothBivariateFunctionDegreeSpinner;
+
     bool m_use_spats;
     bool m_show_pickray;
 
@@ -142,6 +146,12 @@ private slots:
     void displayKdTreeSplitPlanesDepthSpinnerChanged();
 
     void slotKdTreePressed();
+
+    void createMovingLeastSquaresPanel(QWidget *panel);
+
+    void smoothSelectedPointNeighbors();
+
+    void smoothSurface();
 };
 
 #endif
