@@ -176,9 +176,12 @@ void CgPointCloud::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirecti
     // Get the selected point closest to the pick ray
     size_t centerIndex = kdTree->getClosestPointToRay(pickRayStart, pickRayDirection);
 
-
-    // Get the nearest neighbors of the selected point
     unsigned int k = 50;
+    // Get the nearest neighbors of the selected point
+    if(this->m_vertices.size() < 50) {
+        k = 3;
+    }
+
     std::vector<size_t> neighbors = getNearestNeighbors(centerIndex, k);
 
     // Color all vertices cyan
@@ -405,7 +408,6 @@ void CgPointCloud::smoothSurface(size_t neighborCount, size_t bivariateFunctionD
         std::cout << "Smooth Vertex " << i << " Of "  << m_vertices.size() << std::endl;
         glm::vec3 updatedPosition = smoothPoint(i, neighborCount, bivariateFunctionDegree);
         if(updatedPosition != m_vertices[i]) {
-            std::cout << "Updated Position: " << i << std::endl;
             m_vertex_colors[i] = { 1.0, 0.0, 0.0};
         }
         smoothedVertices[i] = updatedPosition;
@@ -415,5 +417,4 @@ void CgPointCloud::smoothSurface(size_t neighborCount, size_t bivariateFunctionD
         m_vertices[i] = smoothedVertices[i];
 
     }
-    std::cout << "done" << std::endl;
 }
