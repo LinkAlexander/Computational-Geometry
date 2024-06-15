@@ -18,8 +18,8 @@
 #include "../CgEvents/CgTrackballEvent.h"
 #include "../CgEvents/CgSplatEvent.h"
 #include "../CgEvents/CgPickRayEvent.h"
-#include "CgSmoothSelectedPointNeighborsEvent.h"
-#include "CgSmoothSurfaceEvent.h"
+#include "CgEvents/CgSmoothSelectedPointNeighborsEvent.h"
+#include "CgEvents/CgSmoothSurfaceEvent.h"
 
 #include <QSlider>
 #include <QVBoxLayout>

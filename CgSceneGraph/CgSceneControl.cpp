@@ -26,8 +26,8 @@
 #include "CgUtils/ObjLoader.h"
 #include "CgMath/CgEigenDecomposition3x3.h"
 #include "CgKdTree.h"
-#include "CgSmoothSelectedPointNeighborsEvent.h"
-#include "CgSmoothSurfaceEvent.h"
+#include "CgEvents/CgSmoothSelectedPointNeighborsEvent.h"
+#include "CgEvents/CgSmoothSurfaceEvent.h"
 #include <string>
 #include <CgMath/Eigen/SVD>
 #include <CgMath/Eigen/Core>
