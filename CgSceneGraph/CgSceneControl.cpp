@@ -456,6 +456,7 @@ void CgSceneControl::handleEvent(CgBaseEvent* e)
             m_triangle_mesh = plottedMesh;
             m_renderer->init(m_triangle_mesh);
             m_renderer->redraw();
+            m_renderer->init(m_pointcloud);
         }
     }
 

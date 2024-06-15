@@ -382,14 +382,17 @@ CgTriangleMesh* CgPointCloud::smoothSelectedPoint(glm::vec3 pickRayStart, glm::v
             // Add the plotted point to the plotting matrix
             plottedPoints[row][col] = plottedPoint;
 
-            // std::cout << "Projected:   " << row << ", " << col << ": " << updatedPointProjected << std::endl;
+            //std::cout << "Projected:   " << row << ", " << col << ": "  << std::endl;
             // std::cout << "Unprojected: " << row << ", " << col << ": " << plottedPoint << std::endl;
         }
+        //project the selected point to the plane
+        m_vertices[centerIndex] = smoothPoint(centerIndex, neighborCount, bivariateFunctionDegree);
+        m_vertex_colors[centerIndex] = {1,1,1};
     }
 
     // Create a triangle mesh based on the plotted points and color them red
     CgTriangleMesh* plottedPointMesh = new CgTriangleMesh();
-    glm::vec3 color = { 255, 0, 0 };
+    glm::vec3 color = { 0, 255, 0 };
     plottedPointMesh->addQuadrangleMesh((glm::vec3*)plottedPoints, plottingSteps, plottingSteps, tangentPlane.getNormal(), color);
 
     return plottedPointMesh;
