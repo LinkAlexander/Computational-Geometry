@@ -177,11 +177,11 @@ void CgPointCloud::applyPickRay(glm::vec3 pickRayStart, glm::vec3 pickRayDirecti
     size_t centerIndex = kdTree->getClosestPointToRay(pickRayStart, pickRayDirection);
 
     unsigned int k = 50;
-    // Get the nearest neighbors of the selected point
+
     if(this->m_vertices.size() < 50) {
         k = 3;
     }
-
+    // Get the nearest neighbors of the selected point
     std::vector<size_t> neighbors = getNearestNeighbors(centerIndex, k);
 
     // Color all vertices cyan
@@ -386,8 +386,8 @@ CgTriangleMesh* CgPointCloud::smoothSelectedPoint(glm::vec3 pickRayStart, glm::v
             // std::cout << "Unprojected: " << row << ", " << col << ": " << plottedPoint << std::endl;
         }
         //project the selected point to the plane
-        m_vertices[centerIndex] = smoothPoint(centerIndex, neighborCount, bivariateFunctionDegree);
-        m_vertex_colors[centerIndex] = {1,1,1};
+//        m_vertices[centerIndex] = smoothPoint(centerIndex, neighborCount, bivariateFunctionDegree);
+//        m_vertex_colors[centerIndex] = {1,1,1};
     }
 
     // Create a triangle mesh based on the plotted points and color them red

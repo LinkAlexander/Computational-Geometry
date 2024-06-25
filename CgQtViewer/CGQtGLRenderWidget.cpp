@@ -246,10 +246,10 @@ void CgQtGLRenderWidget::initializeGL()
     m_program = new QOpenGLShaderProgram;
 
     // CLion Shaders
-    // setShaderSourceFiles("../CgShader/simple.vert","../CgShader/simple.frag");
+     setShaderSourceFiles("../CgShader/simple.vert","../CgShader/simple.frag");
 
     //QT Shaders
-    setShaderSourceFiles("../Source-COG/CgShader/simple.vert","../Source-COG/CgShader/simple.frag");
+//    setShaderSourceFiles("../Source-COG/CgShader/simple.vert","../Source-COG/CgShader/simple.frag");
     setUniformValue("mycolor",glm::vec4(0.0,1.0,0.0,1.0));
 
     m_program->link();
