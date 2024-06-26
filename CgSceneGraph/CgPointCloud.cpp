@@ -293,7 +293,8 @@ CgTriangleMesh* CgPointCloud::smoothSelectedPoint(glm::vec3 pickRayStart, glm::v
     size_t centerIndex = kdTree->getClosestPointToRay(pickRayStart, pickRayDirection);
 
     // Get the nearest neighbor for the selected point
-    std::vector<size_t> neighborIndices = getNearestNeighbors(centerIndex, neighborCount);
+    //TODO using a kdTree crashes with the elefant. Should work otherwise
+    std::vector<size_t> neighborIndices = kdTree->getNearestNeighbors(centerIndex, neighborCount);
 
     // Get the position of the center point to smooth
     glm::vec3 center = m_vertices[centerIndex];
@@ -385,9 +386,6 @@ CgTriangleMesh* CgPointCloud::smoothSelectedPoint(glm::vec3 pickRayStart, glm::v
             //std::cout << "Projected:   " << row << ", " << col << ": "  << std::endl;
             // std::cout << "Unprojected: " << row << ", " << col << ": " << plottedPoint << std::endl;
         }
-        //project the selected point to the plane
-//        m_vertices[centerIndex] = smoothPoint(centerIndex, neighborCount, bivariateFunctionDegree);
-//        m_vertex_colors[centerIndex] = {1,1,1};
     }
 
     // Create a triangle mesh based on the plotted points and color them red
@@ -408,10 +406,14 @@ void CgPointCloud::smoothSurface(size_t neighborCount, size_t bivariateFunctionD
     std::vector<glm::vec3> smoothedVertices(m_vertices.size());
     // Calculate all smoothed vertex positions
     for (size_t i = 0; i < m_vertices.size(); i++) {
-        std::cout << "Smooth Vertex " << i << " Of "  << m_vertices.size() << std::endl;
+        std::cout << "Smooth Vertex " << i << " Of "  << m_vertices.size()-1 << std::endl;
         glm::vec3 updatedPosition = smoothPoint(i, neighborCount, bivariateFunctionDegree);
         if(updatedPosition != m_vertices[i]) {
             m_vertex_colors[i] = { 1.0, 0.0, 0.0};
+        }
+        if(std::isnan(updatedPosition.x) || std::isnan(updatedPosition.y) || std::isnan(updatedPosition.z)) {
+            std::cout << "NAN" << std::endl;
+            continue;
         }
         smoothedVertices[i] = updatedPosition;
     }
